@@ -4,4 +4,6 @@ services:
         build: ./web
         ports:
             - "5000:8000"
-        command: /usr/local/bin/gunicorn -b :8000 flaskapp:app
+        command: ./entrypoint.sh
+        volumes:
+            - ./web:/web
