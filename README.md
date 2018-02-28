@@ -2,11 +2,12 @@
 
 A sample, fullstack, Python web application
 
-1. Python
-2. Flask
-3. MySQL
-4. Gunicorn
-5. JQuery
-6. Bootstrap
+1. Docker
+2. Python
+3. Flask
+4. MySQL
+5. Gunicorn
+6. JQuery
+7. Bootstrap
 
 ---
