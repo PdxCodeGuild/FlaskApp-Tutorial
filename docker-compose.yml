@@ -1,3 +1,5 @@
+# see https://docs.docker.com/compose/compose-file/
+
 version: "3"
 services:
     web:
@@ -7,3 +9,5 @@ services:
         command: ./entrypoint.sh
         volumes:
             - ./web:/web
+        stdin_open: true
+        tty: true
