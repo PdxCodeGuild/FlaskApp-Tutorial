@@ -1,6 +1,10 @@
 # base container image
 FROM python:3.6.1-alpine
 
+# add tzdata to base image; set timezone environment variable
+RUN apk add --no-cache tzdata
+ENV TZ America/Los_Angeles
+
 # setup working directory within container
 RUN mkdir -p /web
 WORKDIR /web
