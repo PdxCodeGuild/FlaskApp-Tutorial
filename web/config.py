@@ -8,3 +8,28 @@ class AppConfig(object):
     @staticmethod
     def init_app(app):
         pass
+
+
+class DevelopmentConfig(AppConfig):
+    DEBUG = True
+
+class TestingConfig(AppConfig):
+    TESTING = True
+
+
+class ProductionConfig(AppConfig):
+    DEBUG = False
+    TESTING = False
+
+    @classmethod
+    def init_app(cls, app):
+        # multi-step setups could go here
+        AppConfig.init_app(app)
+
+
+config = {
+    'development': DevelopmentConfig,
+    'testing':     TestingConfig,
+    'production':  ProductionConfig,
+    'default':     DevelopmentConfig
+}
