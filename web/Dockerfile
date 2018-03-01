@@ -1,9 +1,14 @@
 # base container image
 FROM python:3.6.1-alpine
 
-# add tzdata to base image; set timezone environment variable
+# update system packages
 RUN apk add --no-cache tzdata
+
+# set environment variables for system
 ENV TZ America/Los_Angeles
+
+# set environment variables for application
+ENV FLASK_CONFIG development
 
 # setup working directory within container
 RUN mkdir -p /web
