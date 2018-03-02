@@ -2,6 +2,8 @@ import datetime
 import logging
 import os
 
+from flask import render_template
+
 # call create_app() in app/__init__.py
 from app import create_app
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
@@ -9,8 +11,9 @@ app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
 @app.route('/')
 def hello_flaskapp():
-    logging.info("hello_flaskapp()")
-    return 'Hello FlaskApp'
+    title = "Hello FlaskApp"
+    logging.info("hello_flaskapp() : %s" % title)
+    return render_template('hello.html', page_title=title)
 
 
 # run 'docker ps' to get the flaskapp_web CONTAINER_ID

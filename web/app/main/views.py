@@ -15,18 +15,18 @@ def hello_main():
 @main.route('/info/date')
 def info_date():
     ts = datetime.datetime.now().strftime("%Y/%m/%d @ %H:%M:%S")
-    return "Current Datetime : %s" % ts
+    return "Current Datetime :<pre> %s </pre>" % ts
 
 
 @main.route('/info/config')
 def info_config():
     cnf = dict(current_app.config)
-    return "'%s' Config : %s" % (os.getenv('FLASK_CONFIG'),cnf)
+    return "'%s' Config :<pre> %s </pre>" % (os.getenv('FLASK_CONFIG'),cnf)
 
 
 @main.route('/info/url_map')
 def info_url_map():
-    return "current_app.url_map:<pre> %s </pre>" % escape(current_app.url_map)
+    return "current_app.url_map :<pre> %s </pre>" % escape(current_app.url_map)
 
 
 
