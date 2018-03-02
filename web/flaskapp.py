@@ -1,4 +1,5 @@
 import datetime
+import logging
 import os
 
 # call create_app() in app/__init__.py
@@ -8,6 +9,7 @@ app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
 @app.route('/')
 def hello_flaskapp():
+    logging.info("hello_flaskapp()")
     return 'Hello FlaskApp'
 
 
@@ -18,6 +20,7 @@ def hello_flaskapp():
 @app.route('/debug')
 def hello_debug():
     import pdb; pdb.set_trace()
+    logging.info("hello_debug()")
     return "Hello Python Debugger"
 
 

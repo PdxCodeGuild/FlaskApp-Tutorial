@@ -21,5 +21,5 @@ COPY requirements.txt /web/requirements.txt
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-# copy code from current directory into working directory
+# copy project files into working directory
 COPY . /web
