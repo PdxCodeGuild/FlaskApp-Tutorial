@@ -22,16 +22,3 @@ def hello_debug():
     import pdb; pdb.set_trace()
     logging.info("hello_debug()")
     return "Hello Python Debugger"
-
-
-@app.route('/info/date')
-def info_date():
-    ts = datetime.datetime.now().strftime("%Y/%m/%d @ %H:%M:%S")
-    return "Current Datetime : %s" % ts
-
-
-@app.route('/info/config')
-def app_config():
-    cnf = dict(app.config)
-    return "'%s' Config : %s" % (os.getenv('FLASK_CONFIG'),cnf)
-
