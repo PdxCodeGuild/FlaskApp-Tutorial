@@ -1,5 +1,22 @@
 @charset "utf-8";
 
-/* set a temporary body color to confirm this css is included */
-body { background-color: #f5f5f5; }
+body {}
+#header { min-height: 80px; }
+#main   { min-height: 320px; }
+#footer { min-height: 80px; }
+
+#site_logo {
+    margin: 15px;
+    border: 1px dotted black;
+}
+#site_title {
+    font-weight: 500;
+    font-size: 36px;
+    color: mediumblue;
+}
+
+div#breadcrumb > ol {
+    margin-bottom: 0;
+    background-color: #ffffff;
+}
 

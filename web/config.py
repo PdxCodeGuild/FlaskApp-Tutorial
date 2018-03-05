@@ -9,6 +9,8 @@ class AppConfig(object):
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'kp-cUHRAYH1n-sPaJICcEE2kOpU62mCk'
     LOG_FILE = _basedir+'/logs/flaskapp.log'
     LOG_LEVEL = logging.ERROR  # CRITICAL,ERROR,WARNING,INFO,DEBUG,NOTSET
+    BOOTSTRAP_USE_MINIFIED = True
+    BOOTSTRAP_SERVE_LOCAL = True
 
     @staticmethod
     def init_app(app):
