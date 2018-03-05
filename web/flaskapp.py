@@ -9,7 +9,7 @@ from app import create_app
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
 
-@app.route('/')
+@app.route('/hello_flaskapp')
 def hello_flaskapp():
     title = "Hello FlaskApp"
     logging.info("hello_flaskapp() : %s" % title)
@@ -20,7 +20,7 @@ def hello_flaskapp():
 # run 'docker attach CONTAINER_ID' to connect a terminal session
 # pdb.set_trace() will launch the debugger in the attached terminal
 # see https://docs.python.org/3.6/library/pdb.html?highlight=pdb#debugger-commands
-@app.route('/debug')
+@app.route('/hello_debug')
 def hello_debug():
     import pdb; pdb.set_trace()
     logging.info("hello_debug()")
