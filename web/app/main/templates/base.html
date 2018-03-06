@@ -1,4 +1,5 @@
 {% extends "bootstrap/base.html" %}
+{% import "bootstrap/utils.html" as utils %}
 
 <!-- BLOCK: html_attribs -->
 {% block html_attribs %}{{super()}} lang="en"{% endblock %}
@@ -51,6 +52,14 @@
     </div>
     <hr id="header_hr" size="1"/>
     {% endblock %}
+
+    <div id="messages" class="container-fluid flashed-messages">
+        <div class="row">
+            <div class="col-md-12">
+                {{ utils.flashed_messages(container=False, dismissible=True) }}
+            </div>
+        </div>
+    </div>
 
     {% block main %}
     <div id="main" class="container-fluid layout-1col">
