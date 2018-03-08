@@ -31,7 +31,9 @@
         <div class="row">
             <div id="header_left" class="col-md-4">
                 {% block header_left %}
-<img id="site_logo" src="/static/media/dot_blank.gif" width="100" />
+<a href="{{ url_for('main.main_home') }}">
+<img id="site_logo" src="/static/media/pdxcodeguild.png" width="80" />
+</a>
 <span id="site_title">FlaskApp</span>
                 {% endblock %}
             </div>

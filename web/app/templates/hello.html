@@ -2,6 +2,8 @@
 
 {% block title %}{{super()}} - Hello{% endblock %}
 
+{% block breadcrumb %}{{super()}}<li><a href="{{ url_for('main.main_page', page='hello') }}">Hello</a></li>{% endblock %}
+
 {% block content %}
 <h1>{{ page_title }}</h1>
 <p>template = /web/app/templates/hello.html</p>
