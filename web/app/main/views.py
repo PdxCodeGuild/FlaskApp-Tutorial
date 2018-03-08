@@ -24,6 +24,15 @@ def main_page(page):
         abort(404)
 
 
+@main.route('/info/')
+def main_info():
+    result = ''
+    result += '<br/><a href="'+url_for('.info_date')+'">show datetime</a>'
+    result += '<br/><a href="'+url_for('.info_config')+'">show app.config</a>'
+    result += '<br/><a href="'+url_for('.info_url_map')+'">show url_map</a>'
+    return result
+
+
 @main.route('/info/date')
 def info_date():
     ts = datetime.datetime.now().strftime("%Y/%m/%d @ %H:%M:%S")
@@ -39,8 +48,5 @@ def info_config():
 @main.route('/info/url_map')
 def info_url_map():
     return "current_app.url_map :<pre> %s </pre>" % escape(current_app.url_map)
-
-
-
 
 

@@ -2,3 +2,4 @@ __pycache__
 *.py[cod]
 *.log
 .DS_Store
+mysql/data
