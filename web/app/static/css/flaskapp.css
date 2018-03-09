@@ -1,6 +1,9 @@
 @charset "utf-8";
 
-body {}
+/**
+ * layout
+ * see base.html
+ */
 #header { min-height: 80px; }
 #main   { min-height: 320px; }
 #footer { min-height: 80px; }
@@ -23,3 +26,19 @@ body {}
 #header_hr {
     margin-top: 0;
 }
+#footer_hr {
+    margin-bottom: 0;
+}
+
+
+/**
+ * generic element attributes
+ */
+h1.condensed, h2.condensed, h3.condensed, h4.condensed { margin: 10px 0 5px 0; }
+
+.table-borderless td,
+.table-borderless th {
+    border: none !important;
+}
+
+#debuginfo { padding: 15px;}
