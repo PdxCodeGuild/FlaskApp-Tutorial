@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+
+<!-- BLOCK: title -->
+{% block title %}{{super()}}Items{% endblock %}
+
+
+<!-- BLOCK: breadcrumb -->
+{% block breadcrumb %}
+{{super()}}
+{# <li><a href="{{ url_for('.item_list') }}">List Items</a></li> #}
+{% endblock %}
+
+
+<!-- BLOCK: content -->
+{% block content %}
+
+<div id="item_list_panel" class="panel panel-info">
+    <div class="panel-heading">
+
+<div class="table-responsive">
+<table class="table table-condensed table-borderless">
+<tr>
+<td>
+    Showing {{ rowcnt }} Items
+</td>
+<td class="text-right">
+    <span>Page 1 of 1</span>
+</td>
+</tr>
+</table>
+</div>
+
+    </div> <!-- end class="panel-heading" -->
+    <div class="panel-body">
+
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<tr>
+{% for col in cols %}
+    <th>{{ col }}</th>
+{% endfor %}
+<th></th>
+</tr>
+
+{% for row in rows %}
+    <tr>
+    {% for col in cols %}
+        <td onclick="window.location='{{ url_for('.item_view', id=row.id) }}';">{{ row[col] }}</td>
+    {% endfor %}
+    <td>
+        <a href="{{ url_for('.item_edit', id=row.id) }}">edit</a>
+    </td>
+    </tr>
+{% endfor %}
+
+</table>
+</div>
+
+    </div> <!-- end class="panel-body" -->
+    <div class="panel-footer">
+        panel-footer
+    </div> <!-- end class="panel-footer" -->
+</div> <!-- end class="panel" -->
+
+{% endblock content %}
+
+
+<!-- BLOCK: templates -->
+{% block templates %}{{super()}} - item_list.html{% endblock %}
+
+{# end web/app/item/templates/item_list.html #}

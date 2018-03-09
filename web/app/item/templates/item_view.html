@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+
+<!-- BLOCK: title -->
+{% block title %}{{super()}}Item - {{ item.keyname }}{% endblock %}
+
+
+<!-- BLOCK: breadcrumb -->
+{% block breadcrumb %}
+{{super()}}
+<li><a href="{{ url_for('.item_view', id=item.id) }}">View Item</a></li>
+{% endblock %}
+
+
+<!-- BLOCK: content -->
+{% block content %}
+<div id="item_list_panel" class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="condensed">Item : {{ item.keyname }}</h3>
+    </div>
+    <div class="panel-body">
+
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<tr>
+    <th>column</th>
+    <th>value</th>
+</tr>
+
+{% for col in cols %}
+    <tr>
+    <td>{{ col }}</td>
+    <td>{{ item[col] }}</td>
+    </tr>
+{% endfor %}
+
+</table>
+</div>
+
+    </div> <!-- end class="panel-body" -->
+</div> <!-- end class="panel" -->
+{% endblock %}
+
+
+<!-- BLOCK: templates -->
+{% block templates %}{{super()}} - item_view.html{% endblock %}
+
+{# end web/app/item/templates/item_view.html #}
