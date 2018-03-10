@@ -2,13 +2,15 @@
 
 
 <!-- BLOCK: title -->
-{% block title %}{{super()}}Item - {{ item.keyname }}{% endblock %}
+{% block title %}{{super()}} - Item - {{ item.keyname }}{% endblock %}
 
 
 <!-- BLOCK: breadcrumb -->
 {% block breadcrumb %}
 {{super()}}
-<li><a href="{{ url_for('.item_view', id=item.id) }}">View Item</a></li>
+<li><a href="/admin/">Admin</a></li>
+<li><a href="{{ url_for('.item_list') }}">Items</a></li>
+<li><a href="{{ url_for('.item_view', id=item.id) }}">{{ item.keyname }}</a></li>
 {% endblock %}
 
 
@@ -16,6 +18,10 @@
 {% block content %}
 <div id="item_list_panel" class="panel panel-info">
     <div class="panel-heading">
+<p style="float: right;">
+[ <a href="{{ url_for('.item_view', id=item.id) }}">View Item</a> ]
+[ <a href="{{ url_for('.item_edit', id=item.id) }}">Edit Item</a> ]
+</p>
         <h3 class="condensed">Item : {{ item.keyname }}</h3>
     </div>
     <div class="panel-body">

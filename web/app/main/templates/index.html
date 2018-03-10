@@ -1,8 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}{{super()}} - Home{% endblock %}
 
+<!-- BLOCK: content -->
 {% block content %}
-<h1>{{ page_title }}</h1>
-<p>template = /web/app/main/templates/index.html</p>
+
+<p>This is the Homepage.</p>
+
 {% endblock %}
+
+
+<!-- BLOCK: templates -->
+{% block templates %}{{super()}} - index.html{% endblock %}
+
+{# end web/app/main/templates/index.html #}

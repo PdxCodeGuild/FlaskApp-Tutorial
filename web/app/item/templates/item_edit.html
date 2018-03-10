@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+
+<!-- BLOCK: title -->
+{% block title %}{{super()}}Item Edit{% endblock %}
+
+
+<!-- BLOCK: breadcrumb -->
+{% block breadcrumb %}
+{{super()}}
+<li><a href="/admin/">Admin</a></li>
+<li><a href="{{ url_for('.item_list') }}">Items</a></li>
+<li><a href="{{ url_for('.item_edit', id=form.id.data) }}">Edit {{ form.item.keyname }}</a></li>
+{% endblock %}
+
+
+<!-- BLOCK: content -->
+{% block content %}
+<div id="item_edit_panel" class="panel panel-info">
+    <div class="panel-heading">
+<p style="float: right;">
+[ <a href="{{ url_for('.item_view', id=form.id.data) }}">View Item</a> ]
+[ <a href="{{ url_for('.item_edit', id=form.id.data) }}">Edit Item</a> ]
+</p>
+        <h3 class="condensed">Edit : {{ form.item.keyname }}</h3>
+    </div>
+    <div class="panel-body">
+
+<form class="form-horizontal" action="{{ url_for('.item_edit', id=form.id.data) }}" method="post">
+    {{ form.csrf_token }}
+    {{ form.id }}
+    <div class="form-group">
+        *{{ form.keyname.label }}
+        {{ form.keyname(class_='form-control',placeholder='keyname') }}
+        <p class="help-block">unique textual identifier - letters, numbers, dashes and underscores allowed - no spaces</p>
+    </div>
+    {{ form.submit(class_='btn btn-primary') }}
+    <span class="form-submit-buttons">
+        [ <a href="{{ url_for('.item_delete', id=form.id.data) }}">Delete Item</a> ]
+    </span>
+</form>
+
+{{ form.mod_create.label }} : {{ form.mod_create.data }}<br/>
+
+    </div> <!-- end class="panel-body" -->
+</div> <!-- end class="panel" -->
+{% endblock %}
+
+
+<!-- BLOCK: templates -->
+{% block templates %}{{super()}} - item_edit.html{% endblock %}
+
+{# end web/app/item/templates/item_edit.html #}

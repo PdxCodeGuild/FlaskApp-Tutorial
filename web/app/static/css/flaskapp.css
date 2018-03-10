@@ -36,9 +36,14 @@
  */
 h1.condensed, h2.condensed, h3.condensed, h4.condensed { margin: 10px 0 5px 0; }
 
+form { padding: 15px; }
+.form-submit-buttons { padding-left: 15px; }
+
+.table-condensed { margin-bottom: 0; }
 .table-borderless td,
 .table-borderless th {
     border: none !important;
 }
+
 
 #debuginfo { padding: 15px;}
