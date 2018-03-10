@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+
+<!-- BLOCK: title -->
+{% block title %}{{super()}} - Admin{% endblock %}
+
+
+<!-- BLOCK: breadcrumb -->
+{% block breadcrumb %}
+{{super()}}
+<li><a href="/admin/">Admin</a></li>
+{% endblock %}
+
+
+<!-- BLOCK: content -->
+{% block content %}
+
+<p>This is the landing page for the admin section.</p>
+
+<ol>
+<li><a href="{{ url_for('item.item_list') }}">Items</a></li>
+</ol>
+
+
+{% endblock content %}
+
+
+<!-- BLOCK: templates -->
+{% block templates %}{{super()}} - admin.html{% endblock %}
+
+{# end web/app/main/templates/admin.html #}

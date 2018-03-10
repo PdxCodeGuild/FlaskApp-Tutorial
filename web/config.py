@@ -36,6 +36,8 @@ class DevelopmentConfig(AppConfig):
 class TestingConfig(AppConfig):
     TESTING = True
     LOG_LEVEL = logging.INFO
+    #SQLALCHEMY_ECHO = True
+    WTF_CSRF_ENABLED = False
 
 
 class ProductionConfig(AppConfig):

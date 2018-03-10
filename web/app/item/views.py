@@ -1,10 +1,11 @@
 import logging
 
-from flask import render_template
-from .. import db
+from flask import flash, redirect, render_template, request, url_for
+from .. import db, flash_errors
 from . import item
 
 from .models import ItemModel
+from .forms import CreatItemForm, EditItemForm
 
 
 @item.route('/item/')
@@ -13,17 +14,51 @@ def hello_item():
     return 'Hello FlaskApp : Item Module'
 
 
-@item.route('/admin/item/delete/<int:id>')
+@item.route('/admin/item/delete/<int:id>', methods=['GET','POST'])
 def item_delete( id ):
-    return 'item_delete - id:%s' % (id)
+    item = ItemModel.query.get_or_404(id)
+    db.session.delete(item)
+    db.session.commit()
+    flash('Item deleted (id=%s)' % (item.id))
+    logging.info('item_delete( id:%s )' % (item.id))
+    return redirect(url_for('.item_list'))
 
-@item.route('/admin/item/create')
+
+@item.route('/admin/item/create', methods=['GET','POST'])
 def item_create():
-    return 'item_create'
+    item = ItemModel()
+    form = CreatItemForm(item)
+    if form.validate_on_submit():
+        form.populate_obj(item)
+        db.session.add(item)
+        db.session.commit()
+        flash('Item created (id=%s)' % (item.id))
+        logging.info('item_create( id:%s )' % (item.id))
+        return redirect(url_for('.item_view', id=item.id))
+    else:
+        flash_errors(form)
+    if request.method == 'GET':
+        item.keyname = ''
+        form.process(obj=item)
+    return render_template('item_create.html', form=form)
 
-@item.route('/admin/item/edit/<int:id>')
+
+@item.route('/admin/item/edit/<int:id>', methods=['GET','POST'])
 def item_edit( id ):
-    return 'item_edit - id:%s' % (id)
+    item = ItemModel.query.get_or_404(id)
+    form = EditItemForm(item)
+    if form.validate_on_submit():
+        del form.mod_create
+        form.populate_obj(item)
+        db.session.add(item)
+        db.session.commit()
+        flash('Item updated (id=%s)' % (item.id))
+        logging.info('item_edit( id:%s )' % (item.id))
+        return redirect(url_for('.item_view', id=item.id))
+    else:
+        flash_errors(form)
+    form.process(obj=item)
+    return render_template('item_edit.html', form=form)
 
 
 @item.route('/admin/item/view/<int:id>')

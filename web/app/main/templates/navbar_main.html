@@ -14,14 +14,14 @@
     <div class="collapse navbar-collapse" id="navbar-main-collapse">
       <ul class="nav navbar-nav">
         <!-- li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li -->
-        <li><a href="#">ItemOne</a></li>
-        <li><a href="#">ItemTwo</a></li>
+        <li><a href="#">Items</a></li>
+        <li><a href="#">Users</a></li>
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">ItemThree <span class="caret"></span></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="#">ItemFour</a></li>
+            <li><a href="{{ url_for('item.item_list') }}">Items</a></li>
+            <li><a href="#">Users</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="#">ItemFive</a></li>
             <li><a href="#">ItemSix</a></li>
           </ul>
         </li>
