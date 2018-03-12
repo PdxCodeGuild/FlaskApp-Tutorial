@@ -2,7 +2,7 @@
 
 
 <!-- BLOCK: title -->
-{% block title %}{{super()}}Item Edit{% endblock %}
+{% block title %}{{super()}} - Admin - Edit '{{ form.item.keyname }}'{% endblock %}
 
 
 <!-- BLOCK: breadcrumb -->
@@ -10,7 +10,7 @@
 {{super()}}
 <li><a href="{{ url_for('main.main_page', page='admin') }}">Admin</a></li>
 <li><a href="{{ url_for('.item_list') }}">Items</a></li>
-<li><a href="{{ url_for('.item_edit', id=form.id.data) }}">Edit {{ form.item.keyname }}</a></li>
+<li><a href="{{ url_for('.item_edit', id=form.id.data) }}">Edit '{{ form.item.keyname }}'</a></li>
 {% endblock %}
 
 
@@ -22,7 +22,7 @@
 [ <a href="{{ url_for('.item_view', id=form.id.data) }}">View Item</a> ]
 [ <a href="{{ url_for('.item_edit', id=form.id.data) }}">Edit Item</a> ]
 </p>
-        <h3 class="condensed">Edit : {{ form.item.keyname }}</h3>
+        <h3 class="condensed">Edit Item</h3>
     </div>
     <div class="panel-body">
 
@@ -48,7 +48,7 @@
     </div>
     {{ form.submit(class_='btn btn-primary') }}
     <span class="form-submit-buttons">
-        [ <a data-confirm-link="Delete Item? This action cannot be undone." href="{{ url_for('.item_delete', id=form.id.data) }}">Delete Item</a> ]
+        <a data-confirm-link="Delete Item? This action cannot be undone." href="{{ url_for('.item_delete', id=form.id.data) }}"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete Item</a>
     </span>
 </form>
 

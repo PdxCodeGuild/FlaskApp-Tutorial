@@ -4,7 +4,6 @@ from flask import flash, redirect, render_template, request, url_for
 from jinja2 import TemplateNotFound
 from .. import db, flash_errors
 from . import item
-
 from .models import ItemModel
 from .forms import CreatItemForm, EditItemForm
 
@@ -108,11 +107,27 @@ def item_view( id ):
 @item.route('/admin/item/list')
 def item_list():
     cols = ItemModel.__table__.columns.keys()
-
     rows = db.session.query(ItemModel)
-    rows = rows.order_by(getattr( ItemModel, 'id' ).asc())
-    rows = rows.all()
 
+    status = 'all'  # in [all, active, inactive]
+    sort   = 'id'   # in [cols]
+    order  = 'asc'  # in [asc, desc]
+    offset = 0      # [none, (page-1)*perpage]
+    limit  = 0      # [unlimited, per page]
+
+    if status in ['active', 'inactive']:
+        rows = rows.filter(ItemModel.active == (status == 'active'))
+    if sort in cols:
+        if order == 'desc':
+            rows = rows.order_by(getattr( ItemModel, sort ).desc())
+        else:
+            rows = rows.order_by(getattr( ItemModel, sort ).asc())
+    if offset > 0:
+        rows = rows.offset(offset)
+    if limit > 0:
+        rows = rows.limit(limit)
+
+    rows = rows.all()
     rowcnt = len(rows)
 
     logging.debug('item_list - %s' % (rowcnt))
