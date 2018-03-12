@@ -20,6 +20,37 @@ def item_page(page):
         abort(404)
 
 
+@item.route('/admin/item/action', methods=['POST'])
+def item_action():
+    action   = request.values.get('action', '')
+    item_ids = request.form.getlist('item_id')
+    id_str = "["+",".join([str(id) for id in item_ids])+"]"
+
+    if action and item_ids:
+        if action == 'delete':
+            for id in item_ids:
+                item = ItemModel.query.get_or_404(id)
+                db.session.delete(item)
+            db.session.commit()
+            flash('Items Deleted (id='+id_str+')')
+        if action == 'active':
+            for id in item_ids:
+                item = ItemModel.query.get_or_404(id)
+                item.active = True
+                db.session.add(item)
+            db.session.commit()
+            flash('Items Activated (id='+id_str+')')
+        if action == 'inactive':
+            for id in item_ids:
+                item = ItemModel.query.get_or_404(id)
+                item.active = False
+                db.session.add(item)
+            db.session.commit()
+            flash('Items Deactivated (id='+id_str+')')
+    logging.info('item_action - action:%s, item_ids:%s' % (action, id_str))
+    return redirect(url_for('.item_list'))
+
+
 @item.route('/admin/item/delete/<int:id>', methods=['GET','POST'])
 def item_delete( id ):
     item = ItemModel.query.get_or_404(id)
