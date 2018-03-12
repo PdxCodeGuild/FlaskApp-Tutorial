@@ -2,7 +2,7 @@
 
 
 <!-- BLOCK: title -->
-{% block title %}{{super()}} - Item - {{ item.keyname }}{% endblock %}
+{% block title %}{{super()}} - Admin - View '{{ item.keyname }}'{% endblock %}
 
 
 <!-- BLOCK: breadcrumb -->
@@ -10,7 +10,7 @@
 {{super()}}
 <li><a href="{{ url_for('main.main_page', page='admin') }}">Admin</a></li>
 <li><a href="{{ url_for('.item_list') }}">Items</a></li>
-<li><a href="{{ url_for('.item_view', id=item.id) }}">{{ item.keyname }}</a></li>
+<li><a href="{{ url_for('.item_view', id=item.id) }}">View '{{ item.keyname }}'</a></li>
 {% endblock %}
 
 
@@ -22,7 +22,7 @@
 [ <a href="{{ url_for('.item_view', id=item.id) }}">View Item</a> ]
 [ <a href="{{ url_for('.item_edit', id=item.id) }}">Edit Item</a> ]
 </p>
-        <h3 class="condensed">Item : {{ item.keyname }}</h3>
+        <h3 class="condensed">View Item</h3>
     </div>
     <div class="panel-body">
 
