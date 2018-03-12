@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+<!-- BLOCK: breadcrumb -->
+{% block breadcrumb %}
+{{super()}}
+<li><a href="{{ url_for('.item_page') }}">Items</a></li>
+{% endblock %}
+
+<!-- BLOCK: content -->
+{% block content %}
+
+<p>This is public landing page for the Item Module.</p>
+
+{% endblock %}
+
+
+<!-- BLOCK: templates -->
+{% block templates %}{{super()}} - item_index.html{% endblock %}
+
+{# end web/app/item/templates/item_index.html #}

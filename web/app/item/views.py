@@ -1,6 +1,7 @@
 import logging
 
 from flask import flash, redirect, render_template, request, url_for
+from jinja2 import TemplateNotFound
 from .. import db, flash_errors
 from . import item
 
@@ -8,10 +9,15 @@ from .models import ItemModel
 from .forms import CreatItemForm, EditItemForm
 
 
-@item.route('/item/')
-def hello_item():
-    logging.info("hello_item()")
-    return 'Hello FlaskApp : Item Module'
+@item.route('/item/', defaults={'page': 'index'})
+@item.route('/item/<page>/')
+def item_page(page):
+    try:
+        logging.debug( 'item_page( page:%s )' % (page) )
+        return render_template('item_%s.html' % (page))
+    except TemplateNotFound:
+        logging.info('TemplateNotFound: item_%s.html' % (page))
+        abort(404)
 
 
 @item.route('/admin/item/delete/<int:id>', methods=['GET','POST'])
@@ -48,7 +54,7 @@ def item_edit( id ):
     item = ItemModel.query.get_or_404(id)
     form = EditItemForm(item)
     if form.validate_on_submit():
-        del form.mod_create
+        del form.mod_create, form.mod_update
         form.populate_obj(item)
         db.session.add(item)
         db.session.commit()

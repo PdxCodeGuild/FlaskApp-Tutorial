@@ -8,7 +8,7 @@
 <!-- BLOCK: breadcrumb -->
 {% block breadcrumb %}
 {{super()}}
-<li><a href="/admin/">Admin</a></li>
+<li><a href="{{ url_for('main.main_page', page='admin') }}">Admin</a></li>
 <li><a href="{{ url_for('.item_list') }}">Items</a></li>
 {% endblock %}
 
@@ -24,10 +24,19 @@
 <tr>
 <td>
     Showing {{ rowcnt }} Items
-    <br/><br/>[ <a href="{{ url_for('.item_create') }}">Create Item</a> ]
 </td>
 <td class="text-right">
     <span>Page 1 of 1</span>
+</td>
+</tr>
+<tr>
+<td>
+    [ <a href="{{ url_for('.item_create') }}">Create Item</a> ]
+</td>
+<td class="text-right">
+    [<a href="{{ url_for('.item_list') }}?status=all">All</a>]
+    [<a href="{{ url_for('.item_list') }}?status=active">Active</a>]
+    [<a href="{{ url_for('.item_list') }}?status=inactive">Inactive</a>]
 </td>
 </tr>
 </table>
@@ -52,7 +61,7 @@
     {% endfor %}
     <td>
         [ <a href="{{ url_for('.item_edit', id=row.id) }}">edit</a> ]
-        [ <a href="{{ url_for('.item_delete', id=row.id) }}">delete</a> ]
+        [ <a data-confirm-link="Delete Item? This action cannot be undone." href="{{ url_for('.item_delete', id=row.id) }}">delete</a> ]
     </td>
     </tr>
 {% endfor %}

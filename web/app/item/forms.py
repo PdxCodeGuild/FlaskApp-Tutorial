@@ -22,6 +22,7 @@ def validate_keyname(self, field):
 
 class CreatItemForm(FlaskForm):
     keyname    = StringField('Keyname', validators=[InputRequired(),Length(2,63),validate_keyname], filters=[filter_keyname])
+    item_title = StringField('Title', validators=[InputRequired(),Length(1,255)])
     submit     = SubmitField('Create Item')
 
     def __init__(self, item, *args, **kwargs):
@@ -32,7 +33,11 @@ class CreatItemForm(FlaskForm):
 class EditItemForm(FlaskForm):
     id         = HiddenField('id')
     keyname    = StringField('Keyname', validators=[InputRequired(),Length(2,63),validate_keyname], filters=[filter_keyname])
+    active     = BooleanField('Active')
+    item_title = StringField('Title', validators=[InputRequired(),Length(1,255)])
+    item_text  = TextAreaField('Text')
     mod_create = DateTimeField('Item Created')
+    mod_update = DateTimeField('Item Updated')
     submit     = SubmitField('Update Item')
 
     def __init__(self, item, *args, **kwargs):

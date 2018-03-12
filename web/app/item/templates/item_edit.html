@@ -8,7 +8,7 @@
 <!-- BLOCK: breadcrumb -->
 {% block breadcrumb %}
 {{super()}}
-<li><a href="/admin/">Admin</a></li>
+<li><a href="{{ url_for('main.main_page', page='admin') }}">Admin</a></li>
 <li><a href="{{ url_for('.item_list') }}">Items</a></li>
 <li><a href="{{ url_for('.item_edit', id=form.id.data) }}">Edit {{ form.item.keyname }}</a></li>
 {% endblock %}
@@ -34,13 +34,26 @@
         {{ form.keyname(class_='form-control',placeholder='keyname') }}
         <p class="help-block">unique textual identifier - letters, numbers, dashes and underscores allowed - no spaces</p>
     </div>
+    <div class="form-group">
+        *{{ form.item_title.label }}
+        {{ form.item_title(class_='form-control',placeholder='Title') }}
+    </div>
+    <div class="form-group">
+        {{ form.item_text.label }}
+        {{ form.item_text(class_='form-control',placeholder='Text') }}
+    </div>
+    <div class="form-group">
+        {{ form.active.label }}
+        {{ form.active(class_='form-control') }}
+    </div>
     {{ form.submit(class_='btn btn-primary') }}
     <span class="form-submit-buttons">
-        [ <a href="{{ url_for('.item_delete', id=form.id.data) }}">Delete Item</a> ]
+        [ <a data-confirm-link="Delete Item? This action cannot be undone." href="{{ url_for('.item_delete', id=form.id.data) }}">Delete Item</a> ]
     </span>
 </form>
 
 {{ form.mod_create.label }} : {{ form.mod_create.data }}<br/>
+{{ form.mod_update.label }} : {{ form.mod_update.data }}<br/>
 
     </div> <!-- end class="panel-body" -->
 </div> <!-- end class="panel" -->
