@@ -16,7 +16,7 @@ def main_home():
 @main.route('/<page>/')
 def main_page(page):
     try:
-        logging.debug( "main_page( %s )" % page )
+        logging.debug( 'main_page( page:%s )' % (page) )
         return render_template('%s.html' % (page))
     except TemplateNotFound:
         logging.info('TemplateNotFound: %s.html' % (page))

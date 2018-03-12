@@ -9,7 +9,10 @@
 USE `flaskapp`;
 
 DELETE FROM `item`;
-INSERT INTO `item` (keyname) VALUES ("one");
-INSERT INTO `item` (keyname) VALUES ("two");
-INSERT INTO `item` (keyname) VALUES ("three");
+INSERT INTO `item` (keyname,item_title,item_text) VALUES ("one","One","One here");
+INSERT INTO `item` (keyname,item_title,item_text) VALUES ("two","Two","Two here");
+INSERT INTO `item` (keyname,item_title,item_text) VALUES ("three","Three","Three here");
+INSERT INTO `item` (keyname,item_title,item_text) VALUES ("four","Four","Four here");
+INSERT INTO `item` (keyname,item_title,item_text) VALUES ("five","Five","Five here");
+INSERT INTO `item` (keyname,item_title,item_text) VALUES ("six","Six","Six here");
 OPTIMIZE TABLE `item`;

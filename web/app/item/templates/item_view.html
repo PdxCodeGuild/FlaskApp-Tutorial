@@ -8,7 +8,7 @@
 <!-- BLOCK: breadcrumb -->
 {% block breadcrumb %}
 {{super()}}
-<li><a href="/admin/">Admin</a></li>
+<li><a href="{{ url_for('main.main_page', page='admin') }}">Admin</a></li>
 <li><a href="{{ url_for('.item_list') }}">Items</a></li>
 <li><a href="{{ url_for('.item_view', id=item.id) }}">{{ item.keyname }}</a></li>
 {% endblock %}
