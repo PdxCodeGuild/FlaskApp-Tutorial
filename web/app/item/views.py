@@ -6,6 +6,7 @@ from .. import db, flash_errors
 from . import item
 from .models import ItemModel
 from .forms import CreatItemForm, EditItemForm
+from ..decorators import get_list_opts
 
 @item.route('/item/', defaults={'page': 'index'})
 @item.route('/item/<page>/')
@@ -104,56 +105,23 @@ def item_view( id ):
 
 
 @item.route('/admin/item/list')
+@get_list_opts(ItemModel,'item_list_opts')
 def item_list():
     cols = ItemModel.__table__.columns.keys()
     rows = db.session.query(ItemModel)
 
-    # set default session values
-    session_key = 'item_list_opts'
-    if not session_key in session:
-        logging.debug('create session[%s]' % (session_key))
-        session[session_key] = { \
-            'itemcnt' : 0, \
-            'status'  : 'all', \
-            'sort'    : 'id', \
-            'order'   : 'asc', \
-            'offset'  : 0, \
-            'limit'   : 0, \
-            }
-
-    # get session updates
-    S = session[session_key]
-    status = request.values.get('status', S['status'])
-    sort   = request.values.get('sort',   S['sort'])
-    order  = request.values.get('order',  S['order'])
-    offset = int(request.values.get('offset',  S['offset']))
-    limit  = int(request.values.get('limit', S['limit']))
-
-    S['itemcnt'] = db.session.query(ItemModel).count()
-    if status in ['all','active','inactive']:
-        S['status'] = status
-    if sort in cols and sort != S['sort']:
-        S['sort']  = sort
-        S['order'] = 'asc'
-    elif order in ['asc','desc']:
-        S['order'] = order
-
-    if limit > 0 and limit != S['limit']:
-        S['limit'] = limit
-    if offset > 0 and offset != S['offset']:
-        S['offset'] = offset
-
-    # set session result
-    session[session_key] = S
-
     # use session values to filter/order items
+    opts_key = 'item_list_opts'
+    S = session[opts_key]
+
     if S['status'] in ['active', 'inactive']:
-        rows = rows.filter(ItemModel.active == (status == 'active'))
+        rows = rows.filter(ItemModel.active == (S['status'] == 'active'))
     if S['sort'] in cols:
         if S['order'] == 'desc':
             rows = rows.order_by(getattr( ItemModel, S['sort'] ).desc())
         else:
             rows = rows.order_by(getattr( ItemModel, S['sort'] ).asc())
+
     if S['offset'] > 0:
         rows = rows.offset(S['offset'])
     if S['limit'] > 0:
@@ -163,7 +131,7 @@ def item_list():
     rowcnt = len(rows)
 
     logging.debug('item_list - %s' % (rowcnt))
-    return render_template('item_list.html', cols=cols,rows=rows,rowcnt=rowcnt)
+    return render_template('item_list.html', cols=cols,rows=rows,rowcnt=rowcnt,opts_key=opts_key)
 
 
 @item.route('/hello_orm')
