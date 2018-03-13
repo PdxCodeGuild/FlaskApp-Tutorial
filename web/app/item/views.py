@@ -1,12 +1,11 @@
 import logging
 
-from flask import flash, redirect, render_template, request, url_for
+from flask import flash, redirect, render_template, request, session, url_for
 from jinja2 import TemplateNotFound
 from .. import db, flash_errors
 from . import item
 from .models import ItemModel
 from .forms import CreatItemForm, EditItemForm
-
 
 @item.route('/item/', defaults={'page': 'index'})
 @item.route('/item/<page>/')
@@ -109,23 +108,56 @@ def item_list():
     cols = ItemModel.__table__.columns.keys()
     rows = db.session.query(ItemModel)
 
-    status = 'all'  # in [all, active, inactive]
-    sort   = 'id'   # in [cols]
-    order  = 'asc'  # in [asc, desc]
-    offset = 0      # [none, (page-1)*perpage]
-    limit  = 0      # [unlimited, per page]
+    # set default session values
+    session_key = 'item_list_opts'
+    if not session_key in session:
+        logging.debug('create session[%s]' % (session_key))
+        session[session_key] = { \
+            'itemcnt' : 0, \
+            'status'  : 'all', \
+            'sort'    : 'id', \
+            'order'   : 'asc', \
+            'offset'  : 0, \
+            'limit'   : 0, \
+            }
 
-    if status in ['active', 'inactive']:
+    # get session updates
+    S = session[session_key]
+    status = request.values.get('status', S['status'])
+    sort   = request.values.get('sort',   S['sort'])
+    order  = request.values.get('order',  S['order'])
+    offset = int(request.values.get('offset',  S['offset']))
+    limit  = int(request.values.get('limit', S['limit']))
+
+    S['itemcnt'] = db.session.query(ItemModel).count()
+    if status in ['all','active','inactive']:
+        S['status'] = status
+    if sort in cols and sort != S['sort']:
+        S['sort']  = sort
+        S['order'] = 'asc'
+    elif order in ['asc','desc']:
+        S['order'] = order
+
+    if limit > 0 and limit != S['limit']:
+        S['limit'] = limit
+    if offset > 0 and offset != S['offset']:
+        S['offset'] = offset
+
+    # set session result
+    session[session_key] = S
+
+    # use session values to filter/order items
+    if S['status'] in ['active', 'inactive']:
         rows = rows.filter(ItemModel.active == (status == 'active'))
-    if sort in cols:
-        if order == 'desc':
-            rows = rows.order_by(getattr( ItemModel, sort ).desc())
+    if S['sort'] in cols:
+        if S['order'] == 'desc':
+            rows = rows.order_by(getattr( ItemModel, S['sort'] ).desc())
         else:
-            rows = rows.order_by(getattr( ItemModel, sort ).asc())
-    if offset > 0:
-        rows = rows.offset(offset)
-    if limit > 0:
-        rows = rows.limit(limit)
+            rows = rows.order_by(getattr( ItemModel, S['sort'] ).asc())
+    if S['offset'] > 0:
+        rows = rows.offset(S['offset'])
+    if S['limit'] > 0:
+        rows = rows.limit(S['limit'])
 
     rows = rows.all()
     rowcnt = len(rows)
