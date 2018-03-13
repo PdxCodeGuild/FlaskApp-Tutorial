@@ -2,7 +2,7 @@ import datetime
 import logging
 import os
 
-from flask import abort, current_app, escape, redirect, render_template, url_for
+from flask import abort, current_app, escape, redirect, render_template, request, session, url_for
 from jinja2 import TemplateNotFound
 from . import main
 
@@ -30,6 +30,8 @@ def main_info():
     result += '<br/><a href="'+url_for('.info_config')+'">show app.config</a>'
     result += '<br/><a href="'+url_for('.info_url_map')+'">show url_map</a>'
     result += '<br/><a href="'+url_for('.info_request')+'">show request</a>'
+    result += '<br/><a href="'+url_for('.info_session')+'">show session</a>'
+    result += '<br/><a href="'+url_for('.info_session_clear')+'">clear session</a>'
     return result
 
 
@@ -70,3 +72,17 @@ def info_request():
     for key in sorted(request.environ.keys()):
         result += "<br/>[%s] : %s" % (key,request.environ[key])
     return result
+
+
+@main.route('/info/session')
+def info_session():
+    result = ''
+    for key in session.keys():
+        result += "<br/>"+key+" : "+str(session[key])
+    return "Session : "+result
+
+
+@main.route('/info/session_clear')
+def info_session_clear():
+    session.clear()
+    return redirect(url_for('.info_session'))
