@@ -1,4 +1,5 @@
 import logging
+import math
 
 from flask import flash, redirect, render_template, request, session, url_for
 from jinja2 import TemplateNotFound
@@ -105,7 +106,7 @@ def item_view( id ):
 
 
 @item.route('/admin/item/list')
-@get_list_opts(ItemModel,'item_list_opts')
+@get_list_opts('item_list_opts')
 def item_list():
     cols = ItemModel.__table__.columns.keys()
     rows = db.session.query(ItemModel)
@@ -116,12 +117,22 @@ def item_list():
 
     if S['status'] in ['active', 'inactive']:
         rows = rows.filter(ItemModel.active == (S['status'] == 'active'))
+
+    S['itemcnt'] = rows.count()
+    S['pagecnt'] = int(math.ceil( float(S['itemcnt'])/float(S['limit']) ))
+
+    if S['page'] > S['pagecnt']:
+        S['page'] = S['pagecnt']
+    S['offset'] = 0
+    if ((S['page'] - 1) * S['limit']) < S['itemcnt']:
+        S['offset'] = (S['page'] - 1) * S['limit']
+    session[opts_key] = S
+
     if S['sort'] in cols:
         if S['order'] == 'desc':
             rows = rows.order_by(getattr( ItemModel, S['sort'] ).desc())
         else:
             rows = rows.order_by(getattr( ItemModel, S['sort'] ).asc())
-
     if S['offset'] > 0:
         rows = rows.offset(S['offset'])
     if S['limit'] > 0:
