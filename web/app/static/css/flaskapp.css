@@ -29,6 +29,9 @@
 #footer_hr {
     margin-bottom: 0;
 }
+#debuginfo {
+    padding: 15px;
+}
 
 
 /**
@@ -46,4 +49,5 @@ form { padding: 15px; }
 }
 
 
-#debuginfo { padding: 15px;}
+
+

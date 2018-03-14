@@ -27,7 +27,21 @@
     Showing {{ rowcnt }} of {{ session[opts_key]['itemcnt'] }} Items
 </td>
 <td class="text-right">
-    <span>Page 1 of 1</span>
+    {% if session[opts_key]['page'] > 1 %}
+        <a href="{{ url_for('.item_list') }}?page=1"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>
+        <a href="{{ url_for('.item_list') }}?page={{ session[opts_key]['page'] - 1 }}"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span></a>
+    {% elif session[opts_key]['pagecnt'] > 1 %}
+        <span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+    {% endif %}
+    <span>Page {{ session[opts_key]['page'] }} of {{ session[opts_key]['pagecnt'] }}</span>
+    {% if session[opts_key]['page'] < session[opts_key]['pagecnt'] %}
+        <a href="{{ url_for('.item_list') }}?page={{ session[opts_key]['page'] + 1 }}"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></a>
+        <a href="{{ url_for('.item_list') }}?page={{ session[opts_key]['pagecnt'] }}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>
+    {% elif session[opts_key]['pagecnt'] > 1 %}
+        <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
+    {% endif %}
 </td>
 </tr>
 <tr>
@@ -56,10 +70,13 @@
     </div> <!-- end class="panel-heading" -->
     <div class="panel-body">
 
+
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <tr>
-<th></th>
+<th>
+<input type="checkbox" class="checkall" onclick="checkAll('item_id',this.checked);" />
+</th>
 {% for col in cols %}
     <th>
     {% if col == session[opts_key]['sort'] and session[opts_key]['order'] == 'asc' %}
