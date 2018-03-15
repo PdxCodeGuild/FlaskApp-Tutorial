@@ -14,8 +14,8 @@ USE `flaskapp`;
 DROP TABLE IF EXISTS `item`;
 CREATE TABLE `item` (
     `id`            bigint(20)      NOT NULL AUTO_INCREMENT,
-    `keyname`       varchar(63)     NOT NULL,
     `active`        tinyint(1)      NOT NULL DEFAULT '1',
+    `keyname`       varchar(63)     NOT NULL,
     `item_title`    varchar(255)    DEFAULT NULL,
     `item_text`     text,
     `mod_create`    datetime        DEFAULT CURRENT_TIMESTAMP,
@@ -37,12 +37,15 @@ SELECT "table `item` created" AS MSG;
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
     `id`            bigint(20)      NOT NULL AUTO_INCREMENT,
-    `keyname`       varchar(63)     NOT NULL,
     `active`        tinyint(1)      NOT NULL DEFAULT '1',
+    `keyname`       varchar(63)     NOT NULL,
+    `user_email`    varchar(255)    DEFAULT NULL,
+    `user_pass`     varchar(255) 	DEFAULT NULL,
 
     PRIMARY KEY (`id`),
     UNIQUE KEY `user_keyname` (`keyname`),
-    KEY `user_active` (`active`)
+    KEY `user_active` (`active`),
+    KEY `user_email` (`user_email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
 DESCRIBE `user`;
 SELECT "table `user` created" AS MSG;
