@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+
+<!-- BLOCK: title -->
+{% block title %}{{super()}} - Admin - Users{% endblock %}
+
+
+<!-- BLOCK: breadcrumb -->
+{% block breadcrumb %}
+{{super()}}
+<li><a href="{{ url_for('main.main_page', page='admin') }}">Admin</a></li>
+<li><a href="{{ url_for('.user_list') }}">Users</a></li>
+{% endblock %}
+
+
+<!-- BLOCK: content -->
+{% block content %}
+<form class="form-inline" action="{{ url_for('.user_action') }}" method="post">
+
+<div id="item_list_panel" class="panel panel-info">
+    <div class="panel-heading">
+
+<div class="table-responsive">
+<table class="table table-condensed table-borderless">
+<tr>
+<td>
+    Showing {{ rowcnt }} of {{ session[opts_key]['itemcnt'] }} Users
+</td>
+<td class="text-right">
+    {% if session[opts_key]['page'] > 1 %}
+        <a href="{{ url_for('.user_list') }}?page=1"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></a>
+        <a href="{{ url_for('.user_list') }}?page={{ session[opts_key]['page'] - 1 }}"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span></a>
+    {% elif session[opts_key]['pagecnt'] > 1 %}
+        <span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+    {% endif %}
+    <span>Page {{ session[opts_key]['page'] }} of {{ session[opts_key]['pagecnt'] }}</span>
+    {% if session[opts_key]['page'] < session[opts_key]['pagecnt'] %}
+        <a href="{{ url_for('.user_list') }}?page={{ session[opts_key]['page'] + 1 }}"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></a>
+        <a href="{{ url_for('.user_list') }}?page={{ session[opts_key]['pagecnt'] }}"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></a>
+    {% elif session[opts_key]['pagecnt'] > 1 %}
+        <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
+    {% endif %}
+</td>
+</tr>
+<tr>
+<td>
+    [ <a href="{{ url_for('.user_create') }}">Create User</a> ]
+</td>
+<td class="text-right">
+    {% if session[opts_key]['status'] == 'active' %}
+        [<a href="{{ url_for('.user_list') }}?status=all">All</a>]
+        [Active]
+        [<a href="{{ url_for('.user_list') }}?status=inactive">Inactive</a>]
+    {% elif session[opts_key]['status'] == 'inactive' %}
+        [<a href="{{ url_for('.user_list') }}?status=all">All</a>]
+        [<a href="{{ url_for('.user_list') }}?status=active">Active</a>]
+        [Inactive]
+    {% else %}
+        [All]
+        [<a href="{{ url_for('.user_list') }}?status=active">Active</a>]
+        [<a href="{{ url_for('.user_list') }}?status=inactive">Inactive</a>]
+    {% endif %}
+</td>
+</tr>
+</table>
+</div>
+
+    </div> <!-- end class="panel-heading" -->
+    <div class="panel-body">
+
+
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<tr>
+<th>
+<input type="checkbox" class="checkall" onclick="checkAll('user_id',this.checked);" />
+</th>
+{% for col in cols %}
+    <th>
+    {% if col == session[opts_key]['sort'] and session[opts_key]['order'] == 'asc' %}
+        <a href="{{ url_for('.user_list') }}?sort={{ col }}&order=desc"><span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a>
+    {% elif col == session[opts_key]['sort'] %}
+        <a href="{{ url_for('.user_list') }}?sort={{ col }}&order=asc"><span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span></a>
+    {% else %}
+        <a href="{{ url_for('.user_list') }}?sort={{ col }}"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></a>
+    {% endif %}
+    {{ col }}
+    </th>
+{% endfor %}
+<th></th>
+</tr>
+
+{% for row in rows %}
+    <tr>
+    <td>
+        <input type="checkbox" name="user_id" value="{{row.id}}">
+    </td>
+    {% for col in cols %}
+        <td onclick="window.location='{{ url_for('.user_view', id=row.id) }}';">{{ row[col] }}</td>
+    {% endfor %}
+    <td>
+        <a href="{{ url_for('.user_edit', id=row.id) }}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+    </td>
+    </tr>
+{% endfor %}
+
+</table>
+</div>
+
+    </div> <!-- end class="panel-body" -->
+    <div class="panel-footer">
+<div id="list-actions">
+    <div class="form-group">
+        <label for="action" class="sr-only">Action</label>
+        <select id="action" name="action" class="form-control">
+            <option value="">Selected Users...</option>
+            <option value="active">Set Active</option>
+            <option value="inactive">Set Inactive</option>
+            <option value="delete">Delete</option>
+        </select>
+    </div>
+    <button class="btn btn-default" type="submit">Apply</button>
+</div>
+    </div> <!-- end class="panel-footer" -->
+</div> <!-- end class="panel" -->
+
+</form>
+{% endblock content %}
+
+
+<!-- BLOCK: templates -->
+{% block templates %}{{super()}} - user_list.html{% endblock %}
+
+{# end web/app/user/templates/user_list.html #}

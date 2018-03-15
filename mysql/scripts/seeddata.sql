@@ -8,6 +8,10 @@
 
 USE `flaskapp`;
 
+DELETE FROM `user`;
+INSERT INTO `user` (keyname) VALUES ("admin");
+OPTIMIZE TABLE `user`;
+
 DELETE FROM `item`;
 INSERT INTO `item` (keyname,item_title,item_text) VALUES ("one","One","One here");
 INSERT INTO `item` (keyname,item_title,item_text) VALUES ("two","Two","Two here");

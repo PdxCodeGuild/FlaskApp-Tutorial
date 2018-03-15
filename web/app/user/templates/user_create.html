@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+
+<!-- BLOCK: title -->
+{% block title %}{{super()}} - Admin - Create User{% endblock %}
+
+
+<!-- BLOCK: breadcrumb -->
+{% block breadcrumb %}
+{{super()}}
+<li><a href="{{ url_for('main.main_page', page='admin') }}">Admin</a></li>
+<li><a href="{{ url_for('.user_list') }}">Users</a></li>
+<li><a href="{{ url_for('.user_create') }}">Create</a></li>
+{% endblock %}
+
+
+<!-- BLOCK: content -->
+{% block content %}
+<div id="item_create_panel" class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="condensed">Create User</h3>
+    </div>
+    <div class="panel-body">
+
+<form class="form-horizontal" action="{{ url_for('.user_create') }}" method="post">
+    {{ form.csrf_token }}
+    <div class="form-group">
+        *{{ form.keyname.label }}
+        {{ form.keyname(class_='form-control',placeholder='keyname') }}
+        <p class="help-block">unique textual identifier - letters, numbers, dashes and underscores allowed, no spaces</p>
+    </div>
+    {{ form.submit(class_='btn btn-primary') }}
+    <span class="form-submit-buttons">
+        <a class="btn btn-default" href="{{ url_for('.user_list') }}">Cancel</a>
+    </span>
+</form>
+
+    </div> <!-- end class="panel-body" -->
+</div> <!-- end class="panel" -->
+{% endblock %}
+
+
+<!-- BLOCK: templates -->
+{% block templates %}{{super()}} - user_create.html{% endblock %}
+
+{# end web/app/user/templates/user_create.html #}

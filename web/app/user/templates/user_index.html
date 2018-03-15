@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+<!-- BLOCK: title -->
+{% block title %}{{super()}} - Users{% endblock %}
+
+<!-- BLOCK: breadcrumb -->
+{% block breadcrumb %}
+{{super()}}
+<li><a href="{{ url_for('.user_page') }}">Users</a></li>
+{% endblock %}
+
+<!-- BLOCK: content -->
+{% block content %}
+
+<p>This is public landing page for the User Module.</p>
+
+{% endblock %}
+
+
+<!-- BLOCK: templates -->
+{% block templates %}{{super()}} - user_index.html{% endblock %}
+
+{# end web/app/user/templates/user_index.html #}

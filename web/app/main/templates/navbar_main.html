@@ -15,14 +15,14 @@
       <ul class="nav navbar-nav">
         <!-- li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li -->
         <li><a href="{{ url_for('item.item_page') }}">Items</a></li>
-        <li><a href="#">Users</a></li>
+        <li><a href="{{ url_for('user.user_page') }}">Users</a></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="{{ url_for('main.main_page', page='admin') }}">Dashboard</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="{{ url_for('item.item_list') }}">Items</a></li>
-            <li><a href="#">Users</a></li>
+            <li><a href="{{ url_for('user.user_list') }}">Users</a></li>
           </ul>
         </li>
       </ul>
