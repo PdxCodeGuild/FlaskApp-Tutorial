@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+
+<!-- BLOCK: title -->
+{% block title %}{{super()}} - Admin - View '{{ user.keyname }}'{% endblock %}
+
+
+<!-- BLOCK: breadcrumb -->
+{% block breadcrumb %}
+{{super()}}
+<li><a href="{{ url_for('main.main_page', page='admin') }}">Admin</a></li>
+<li><a href="{{ url_for('.user_list') }}">Users</a></li>
+<li><a href="{{ url_for('.user_view', id=user.id) }}">View '{{ user.keyname }}'</a></li>
+{% endblock %}
+
+
+<!-- BLOCK: content -->
+{% block content %}
+<div id="item_list_panel" class="panel panel-info">
+    <div class="panel-heading">
+<p style="float: right;">
+[ <a href="{{ url_for('.user_view', id=user.id) }}">View User</a> ]
+[ <a href="{{ url_for('.user_edit', id=user.id) }}">Edit User</a> ]
+</p>
+        <h3 class="condensed">View User</h3>
+    </div>
+    <div class="panel-body">
+
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<tr>
+    <th>column</th>
+    <th>value</th>
+</tr>
+
+{% for col in cols %}
+    <tr>
+    <td>{{ col }}</td>
+    <td>{{ user[col] }}</td>
+    </tr>
+{% endfor %}
+
+</table>
+</div>
+
+    </div> <!-- end class="panel-body" -->
+</div> <!-- end class="panel" -->
+{% endblock %}
+
+
+<!-- BLOCK: templates -->
+{% block templates %}{{super()}} - user_view.html{% endblock %}
+
+{# end web/app/user/templates/user_view.html #}

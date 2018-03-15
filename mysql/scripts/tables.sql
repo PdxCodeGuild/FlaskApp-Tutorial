@@ -30,3 +30,19 @@ CREATE TABLE `item` (
 DESCRIBE `item`;
 SELECT "table `item` created" AS MSG;
 
+
+-- -------------------------------------------- --
+-- user
+-- -------------------------------------------- --
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
+    `id`            bigint(20)      NOT NULL AUTO_INCREMENT,
+    `keyname`       varchar(63)     NOT NULL,
+    `active`        tinyint(1)      NOT NULL DEFAULT '1',
+
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `user_keyname` (`keyname`),
+    KEY `user_active` (`active`)
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
+DESCRIBE `user`;
+SELECT "table `user` created" AS MSG;

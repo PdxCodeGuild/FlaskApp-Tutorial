@@ -35,12 +35,13 @@ def hello_db():
     #stmt = "SELECT CONNECTION_ID()"  # Return the connection ID (thread ID) for the connection
     #stmt = "SELECT CURRENT_USER()"   # The authenticated user name and host name
     #stmt = "SELECT DATABASE()"       # Return the default (current) database name
-    #stmt = "SHOW TABLES"             # Return list of non-temporary tables in current database
+    stmt = "SHOW TABLES"             # Return list of non-temporary tables in current database
 
     #stmt = "show create database %s;" % current_app.config['MYSQL_DB']
     #stmt = "show grants for %s;" % current_app.config['MYSQL_USER']
 
-    #stmt = "select * from item"             # Return list of non-temporary tables in current database
+    #stmt = "select * from item"
+    #stmt = "select * from user"
 
     #import pdb; pdb.set_trace()
     eng = db.create_engine(current_app.config['SQLALCHEMY_DATABASE_URI'])

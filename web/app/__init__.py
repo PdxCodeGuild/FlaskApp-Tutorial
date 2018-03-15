@@ -23,6 +23,9 @@ def create_app(config_name):
     from .item import item as item_blueprint
     app.register_blueprint(item_blueprint)
 
+    from .user import user as user_blueprint
+    app.register_blueprint(user_blueprint)
+
     return app
 
 
