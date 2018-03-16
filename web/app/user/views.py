@@ -86,6 +86,8 @@ def user_edit( id ):
     user = UserModel.query.get_or_404(id)
     form = EditUserForm(user)
     if form.validate_on_submit():
+        if form.password.data == '':
+            del form.password
         form.populate_obj(user)
         db.session.add(user)
         db.session.commit()
@@ -100,8 +102,8 @@ def user_edit( id ):
 
 @user.route('/admin/user/view/<int:id>')
 def user_view( id ):
-    user = UserModel.query.get_or_404(id)
     cols = UserModel.__table__.columns.keys()
+    user = UserModel.query.get_or_404(id)
     return render_template('user_view.html', cols=cols, user=user)
 
 
@@ -109,6 +111,7 @@ def user_view( id ):
 @get_list_opts('user_list_opts')
 def user_list():
     cols = UserModel.__table__.columns.keys()
+    cols_filtered = list(filter(lambda x: x not in ['user_pass'], cols))
     rows = db.session.query(UserModel)
 
     opts_key = 'user_list_opts'
@@ -141,6 +144,6 @@ def user_list():
     rowcnt = len(rows)
 
     logging.debug('user_list - %s' % (rowcnt))
-    return render_template('user_list.html', cols=cols,rows=rows,rowcnt=rowcnt,opts_key=opts_key)
+    return render_template('user_list.html', cols=cols_filtered,rows=rows,rowcnt=rowcnt,opts_key=opts_key)
 
 

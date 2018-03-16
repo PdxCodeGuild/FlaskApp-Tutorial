@@ -31,8 +31,20 @@
     {{ form.id }}
     <div class="form-group">
         *{{ form.keyname.label }}
-        {{ form.keyname(class_='form-control',placeholder='keyname') }}
+        {{ form.keyname(class_='form-control',placeholder='username') }}
         <p class="help-block">unique textual identifier - letters, numbers, dashes and underscores allowed - no spaces</p>
+    </div>
+    <div class="form-group">
+        *{{ form.user_email.label }}
+        {{ form.user_email(class_='form-control',placeholder='a@b.c') }}
+    </div>
+    <div class="form-group">
+        {{ form.password.label }}
+        {{ form.password(class_='form-control',placeholder='password') }}
+    </div>
+    <div class="form-group">
+        {{ form.password2.label }}
+        {{ form.password2(class_='form-control',placeholder='confirmation') }}
     </div>
     <div class="form-group">
         {{ form.active.label }}
