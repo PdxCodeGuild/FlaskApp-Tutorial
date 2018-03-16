@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+
+<!-- BLOCK: title -->
+{% block title %}{{super()}} - Login{% endblock %}
+
+
+<!-- BLOCK: breadcrumb -->
+{% block breadcrumb %}
+{{super()}}
+<li><a href="{{ url_for('.user_login') }}">Login</a></li>
+{% endblock %}
+
+
+<!-- BLOCK: content -->
+{% block content %}
+<div id="item_edit_panel" class="panel panel-info">
+    <div class="panel-heading">
+<p style="float: right;">
+[ <a href="{{ url_for('main.main_home') }}">Cancel</a> ]
+</p>
+        <h3 class="condensed">User Login</h3>
+    </div>
+    <div class="panel-body">
+
+<form class="form-horizontal" action="{{ url_for('.user_login') }}" method="post">
+    {{ form.csrf_token }}
+    {{ form.next }}
+    <div class="form-group">
+        *{{ form.user_email.label }}
+        {{ form.user_email(class_='form-control',placeholder='a@b.c') }}
+    </div>
+    <div class="form-group">
+        *{{ form.password.label }}
+        {{ form.password(class_='form-control') }}
+    </div>
+    <div class="form-group">
+        {{ form.remember.label }}
+        {{ form.remember(class_='form-control') }}
+    </div>
+    {{ form.submit(class_='btn btn-primary') }}
+    <span class="form-submit-buttons">
+        <a class="btn btn-default" href="{{ url_for('main.main_home') }}">Cancel</a>
+    </span>
+</form>
+
+    </div> <!-- end class="panel-body" -->
+</div> <!-- end class="panel" -->
+{% endblock %}
+
+
+<!-- BLOCK: templates -->
+{% block templates %}{{super()}} - user_login.html{% endblock %}
+
+{# end web/app/user/templates/user_login.html #}

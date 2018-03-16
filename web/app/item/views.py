@@ -2,6 +2,7 @@ import logging
 import math
 
 from flask import flash, redirect, render_template, request, session, url_for
+from flask_login import login_required
 from jinja2 import TemplateNotFound
 from .. import db, flash_errors
 from . import item
@@ -21,6 +22,7 @@ def item_page(page):
 
 
 @item.route('/admin/item/action', methods=['POST'])
+@login_required
 def item_action():
     action   = request.values.get('action', '')
     item_ids = request.form.getlist('item_id')
@@ -52,6 +54,7 @@ def item_action():
 
 
 @item.route('/admin/item/delete/<int:id>', methods=['GET','POST'])
+@login_required
 def item_delete( id ):
     item = ItemModel.query.get_or_404(id)
     db.session.delete(item)
@@ -62,6 +65,7 @@ def item_delete( id ):
 
 
 @item.route('/admin/item/create', methods=['GET','POST'])
+@login_required
 def item_create():
     item = ItemModel()
     form = CreatItemForm(item)
@@ -81,6 +85,7 @@ def item_create():
 
 
 @item.route('/admin/item/edit/<int:id>', methods=['GET','POST'])
+@login_required
 def item_edit( id ):
     item = ItemModel.query.get_or_404(id)
     form = EditItemForm(item)
@@ -99,6 +104,7 @@ def item_edit( id ):
 
 
 @item.route('/admin/item/view/<int:id>')
+@login_required
 def item_view( id ):
     item = ItemModel.query.get_or_404(id)
     cols = ItemModel.__table__.columns.keys()
@@ -107,6 +113,7 @@ def item_view( id ):
 
 @item.route('/admin/item/list')
 @get_list_opts('item_list_opts')
+@login_required
 def item_list():
     cols = ItemModel.__table__.columns.keys()
     rows = db.session.query(ItemModel)

@@ -29,6 +29,18 @@ def validate_usermail(self, field):
         raise ValidationError('Email address already in use.')
 
 
+class LoginForm(FlaskForm):
+    next       = HiddenField('next')
+    user_email = StringField('Email', validators=[InputRequired(),Length(1,255),Email()])
+    password   = PasswordField('Password', validators=[InputRequired()])
+    remember   = BooleanField('Keep me logged in')
+    submit     = SubmitField('Login')
+
+    def __init__(self, user, *args, **kwargs):
+        super(LoginForm, self).__init__(*args, **kwargs)
+        self.user = user
+
+
 class CreatUserForm(FlaskForm):
     keyname    = StringField('Username', validators=[InputRequired(),Length(2,63),validate_username], filters=[filter_username])
     user_email = StringField('Email', validators=[InputRequired(),Length(1,63),Email(),validate_usermail], filters=[filter_useremail])
