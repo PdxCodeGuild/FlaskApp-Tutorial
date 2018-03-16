@@ -2,7 +2,7 @@
 
 
 <!-- BLOCK: title -->
-{% block title %}{{super()}} - Admin - Edit '{{ form.item.keyname }}'{% endblock %}
+{% block title %}{{super()}} - Admin - Edit Item '{{ form.item.keyname }}'{% endblock %}
 
 
 <!-- BLOCK: breadcrumb -->
@@ -22,7 +22,7 @@
 [ <a href="{{ url_for('.item_view', id=form.id.data) }}">View Item</a> ]
 [ <a href="{{ url_for('.item_edit', id=form.id.data) }}">Edit Item</a> ]
 </p>
-        <h3 class="condensed">Edit Item</h3>
+        <h3 class="condensed">Item '{{ form.item.keyname }}'</h3>
     </div>
     <div class="panel-body">
 

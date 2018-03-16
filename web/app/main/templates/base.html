@@ -42,6 +42,11 @@
             </div>
             <div id="header_right" class="col-md-4 text-right">
                 {% block header_right %}{% endblock %}
+                {% if current_user.user_email %}
+                    <a href="{{ url_for('user.user_profile') }}">{{ current_user.user_email }}</a>
+                {% else %}
+                    <a href="{{ url_for('user.user_login') }}">Login</a>
+                {% endif %}
             </div>
         </div>
         <div class="row">
@@ -93,8 +98,10 @@
     {% if config['DEBUG'] %}
 <div id="debuginfo"><pre>
 DEBUG:
+{% if current_user.user_email %}LOGGED IN: {{ current_user.user_email }}{% else %}LOGGED OUT{% endif %}
 TEMPLATES: {% block templates %}base.html{% endblock %}
 REQUEST.ARGS: {{ request.args }}
+REQUEST.COOKIES: {{ request.cookies }}
 SESSION: {{ session }}
 </pre></div>
     {% endif %}

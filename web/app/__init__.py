@@ -1,10 +1,12 @@
 from flask import Flask, flash
 from flask_bootstrap import Bootstrap
+from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from config import config
 
 bootstrap = Bootstrap()
 db = SQLAlchemy()
+login_manager = LoginManager()
 
 def create_app(config_name):
     app = Flask(__name__)
@@ -16,6 +18,8 @@ def create_app(config_name):
 
     bootstrap.init_app(app)
     db.init_app(app)
+
+    init_login_manager(app)
 
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
@@ -42,3 +46,13 @@ def flash_errors(form):
                 getattr(form, field).label.text,
                 error
             ),'error')
+
+def init_login_manager(app):
+    login_manager.init_app(app)
+    login_manager.session_protection = 'strong'
+    login_manager.login_view = 'user.user_login'
+    login_manager.login_message = u"Please log in to access this page."
+    login_manager.login_message_category = "warning"
+    login_manager.refresh_view = 'user.user_login'
+    login_manager.needs_refresh_message = (u"Please confirm your credentials to access this page.")
+    login_manager.needs_refresh_message_category = "warning"

@@ -1,12 +1,13 @@
 import logging
 import math
 
-from flask import flash, redirect, render_template, request, session, url_for
+from flask import abort, flash, redirect, render_template, request, session, url_for
+from flask_login import current_user, login_required, login_user, logout_user
 from jinja2 import TemplateNotFound
 from .. import db, flash_errors
 from . import user
 from .models import UserModel
-from .forms import CreatUserForm, EditUserForm
+from .forms import CreatUserForm, EditUserForm, LoginForm
 from ..decorators import get_list_opts
 
 
@@ -21,7 +22,41 @@ def user_page(page):
         abort(404)
 
 
+@user.route('/login', methods=['GET','POST'])
+def user_login():
+    user = UserModel()
+    form = LoginForm(user)
+    if form.validate_on_submit():
+        user = UserModel.query.filter_by(user_email=form.user_email.data).first()
+        if user is not None and user.verify_password(form.password.data):
+            login_user(user, form.remember.data)
+            return redirect(form.next.data or url_for('main.main_home'))
+        flash('Invalid username or password')
+    else:
+        flash_errors(form)
+    form.next.data = request.args.get('next') or url_for('main.main_home')
+    return render_template('user_login.html', form=form)
+
+
+@user.route('/logout')
+#@login_required
+def user_logout():
+    logout_user()
+    flash('You have been logged out.')
+    return redirect(url_for('main.main_page', page='index'))
+
+
+@user.route('/profile')
+@login_required
+def user_profile():
+    cols = UserModel.__table__.columns.keys()
+    cols_filtered = list(filter(lambda x: x not in ['id','user_pass'], cols))
+    user = UserModel.query.get_or_404( current_user.id )
+    return render_template('user_profile.html', cols=cols_filtered, user=user)
+
+
 @user.route('/admin/user/action', methods=['POST'])
+@login_required
 def user_action():
     action   = request.values.get('action', '')
     user_ids = request.form.getlist('user_id')
@@ -53,6 +88,7 @@ def user_action():
 
 
 @user.route('/admin/user/delete/<int:id>', methods=['GET','POST'])
+@login_required
 def user_delete( id ):
     user = UserModel.query.get_or_404(id)
     db.session.delete(user)
@@ -63,6 +99,7 @@ def user_delete( id ):
 
 
 @user.route('/admin/user/create', methods=['GET','POST'])
+@login_required
 def user_create():
     user = UserModel()
     form = CreatUserForm(user)
@@ -82,6 +119,7 @@ def user_create():
 
 
 @user.route('/admin/user/edit/<int:id>', methods=['GET','POST'])
+@login_required
 def user_edit( id ):
     user = UserModel.query.get_or_404(id)
     form = EditUserForm(user)
@@ -101,6 +139,7 @@ def user_edit( id ):
 
 
 @user.route('/admin/user/view/<int:id>')
+@login_required
 def user_view( id ):
     cols = UserModel.__table__.columns.keys()
     user = UserModel.query.get_or_404(id)
@@ -109,6 +148,7 @@ def user_view( id ):
 
 @user.route('/admin/user/list', methods=['GET','POST'])
 @get_list_opts('user_list_opts')
+@login_required
 def user_list():
     cols = UserModel.__table__.columns.keys()
     cols_filtered = list(filter(lambda x: x not in ['user_pass'], cols))
