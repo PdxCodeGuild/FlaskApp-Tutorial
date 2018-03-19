@@ -1,7 +1,7 @@
 import logging
 import math
 
-from flask import flash, redirect, render_template, request, session, url_for
+from flask import abort, flash, redirect, render_template, request, session, url_for
 from flask_login import login_required
 from jinja2 import TemplateNotFound
 from .. import db, flash_errors
@@ -118,7 +118,6 @@ def item_list():
     cols = ItemModel.__table__.columns.keys()
     rows = db.session.query(ItemModel)
 
-    # use session values to filter/order items
     opts_key = 'item_list_opts'
     S = session[opts_key]
 
