@@ -28,10 +28,13 @@ def user_login():
     form = LoginForm(user)
     if form.validate_on_submit():
         user = UserModel.query.filter_by(user_email=form.user_email.data).first()
+        if user is not None and user.user_pass is None:
+            user.password = form.password.data
         if user is not None and user.verify_password(form.password.data):
+            user.update_mod_login()
             login_user(user, form.remember.data)
             return redirect(form.next.data or url_for('main.main_home'))
-        flash('Invalid username or password')
+        flash('Invalid username or password','warning')
     else:
         flash_errors(form)
     form.next.data = request.args.get('next') or url_for('main.main_home')
@@ -123,6 +126,7 @@ def user_create():
 def user_edit( id ):
     user = UserModel.query.get_or_404(id)
     form = EditUserForm(user)
+    del form.mod_create, form.mod_update
     if form.validate_on_submit():
         if form.password.data == '':
             del form.password

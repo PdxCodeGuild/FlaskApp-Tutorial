@@ -41,11 +41,17 @@ CREATE TABLE `user` (
     `keyname`       varchar(63)     NOT NULL,
     `user_email`    varchar(255)    DEFAULT NULL,
     `user_pass`     varchar(255) 	DEFAULT NULL,
+    `cnt_login`     smallint(6)     DEFAULT '0',
+    `mod_login`     datetime        DEFAULT NULL,
+    `mod_create`    datetime        DEFAULT CURRENT_TIMESTAMP,
+    `mod_update`    datetime        DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (`id`),
     UNIQUE KEY `user_keyname` (`keyname`),
     KEY `user_active` (`active`),
-    KEY `user_email` (`user_email`)
+    KEY `user_email` (`user_email`),
+    KEY `user_login` (`mod_login`),
+    KEY `user_create` (`mod_create`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
 DESCRIBE `user`;
 SELECT "table `user` created" AS MSG;

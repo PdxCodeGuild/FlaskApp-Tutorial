@@ -60,6 +60,10 @@ class EditUserForm(FlaskForm):
     user_email = StringField('Email', validators=[InputRequired(),Length(1,63),Email(),validate_usermail], filters=[filter_useremail])
     password   = PasswordField('Password', validators=[EqualTo('password2',message="Passwords must match.")])
     password2  = PasswordField('Confirm Password')
+    cnt_login  = IntegerField('Login Count')
+    mod_login  = DateTimeField('Last Login')
+    mod_create = DateTimeField('User Created')
+    mod_update = DateTimeField('User Updated')
     submit     = SubmitField('Update User')
 
     def __init__(self, user, *args, **kwargs):

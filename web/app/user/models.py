@@ -1,6 +1,7 @@
 import logging
 
 from flask import url_for
+from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from .. import db, login_manager
 
@@ -20,6 +21,10 @@ class UserModel(db.Model):
     keyname    = db.Column(db.String(63), nullable=False, unique=True, index=True, default='')
     user_email = db.Column(db.String(255), nullable=False, unique=True, index=True)
     user_pass  = db.Column(db.String(128))
+    cnt_login  = db.Column(db.Integer, default=0)
+    mod_login  = db.Column(db.DateTime)
+    mod_create = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    mod_update = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     @property
     def password(self):
@@ -45,6 +50,13 @@ class UserModel(db.Model):
     def get_id(self):
         return self.user_email
 
+    def update_mod_login(self):
+        self.cnt_login = self.cnt_login + 1
+        self.mod_login = datetime.utcnow()
+        db.session.add(self)
+        db.session.commit()
+        logging.debug( "update_mod_login(%s)" %  self.user_email)
+
     def to_json(self):
         json_user = {
             #'url': url_for('api.get_user', id=self.id),
@@ -52,6 +64,10 @@ class UserModel(db.Model):
             'active'    : self.active,
             'keyname'   : self.keyname,
             'user_email': self.user_email,
+            'cnt_login' : self.cnt_login,
+            'mod_login' : self.mod_login,
+            'mod_create': self.mod_create,
+            'mod_update': self.mod_update,
         }
         return json_user
 
