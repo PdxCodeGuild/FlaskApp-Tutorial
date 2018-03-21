@@ -1,4 +1,4 @@
-# see https://docs.docker.com/compose/compose-file/
+# @see https://docs.docker.com/compose/compose-file/
 
 version: "3"
 services:

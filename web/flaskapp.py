@@ -21,7 +21,7 @@ def hello_flaskapp():
 # run 'docker ps' to get the flaskapp_web CONTAINER_ID
 # run 'docker attach CONTAINER_ID' to connect a terminal session
 # pdb.set_trace() will launch the debugger in the attached terminal
-# see https://docs.python.org/3.6/library/pdb.html?highlight=pdb#debugger-commands
+# @see https://docs.python.org/3.6/library/pdb.html?highlight=pdb#debugger-commands
 @app.route('/hello_debug')
 def hello_debug():
     import pdb; pdb.set_trace()
@@ -42,6 +42,7 @@ def hello_db():
 
     #stmt = "select * from item"
     #stmt = "select * from user"
+    #stmt = "select * from user join item on user.id=item.owner_id"
 
     #import pdb; pdb.set_trace()
     eng = db.create_engine(current_app.config['SQLALCHEMY_DATABASE_URI'])

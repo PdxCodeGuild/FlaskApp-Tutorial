@@ -1,6 +1,15 @@
 from flask import url_for
 from datetime import datetime
 from .. import db
+from ..user.models import UserModel
+
+
+def get_owner_id_choices():
+    result = []
+    rows = UserModel.query.order_by(getattr( UserModel, 'keyname' ).asc())
+    for row in rows:
+        result.append((row.id, "%s (%s)" % (row.keyname,row.user_email)))
+    return result
 
 
 class ItemModel(db.Model):
@@ -13,6 +22,12 @@ class ItemModel(db.Model):
     mod_create = db.Column(db.DateTime, default=datetime.utcnow)
     mod_update = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, index=True)
 
+    # 'back_populates' requires reciprocal relationship in UserModel ; 'backref' creates both sides
+    # @see http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html
+    owner_id   = db.Column(db.Integer, db.ForeignKey('user.id'))
+    #owner      = db.relationship('UserModel', back_populates='items')
+    owner      = db.relationship('UserModel', backref='items')
+
     def to_json(self):
         json_item = {
             #'url': url_for('api.get_item', id=self.id),
@@ -23,6 +38,8 @@ class ItemModel(db.Model):
             'item_text' : self.item_text,
             'mod_create': self.mod_create,
             'mod_update': self.mod_update,
+            #'owner_url': url_for('api.get_user', id=self.owner_id),
+            'owner_id'  : self.owner_id,
         }
         return json_item
 

@@ -16,7 +16,7 @@
 
 <!-- BLOCK: content -->
 {% block content %}
-<div id="item_edit_panel" class="panel panel-info">
+<div id="item_edit_panel" class="panel {% if form.active.data %}panel-info{% else %}panel-warning{% endif %}">
     <div class="panel-heading">
 <p style="float: right;">
 [ <a href="{{ url_for('.user_view', id=form.id.data) }}">View User</a> ]

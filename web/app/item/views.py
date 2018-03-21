@@ -2,11 +2,11 @@ import logging
 import math
 
 from flask import abort, flash, redirect, render_template, request, session, url_for
-from flask_login import login_required
+from flask_login import current_user, login_required
 from jinja2 import TemplateNotFound
 from .. import db, flash_errors
 from . import item
-from .models import ItemModel
+from .models import ItemModel, get_owner_id_choices
 from .forms import CreatItemForm, EditItemForm
 from ..decorators import get_list_opts
 
@@ -71,6 +71,7 @@ def item_create():
     form = CreatItemForm(item)
     if form.validate_on_submit():
         form.populate_obj(item)
+        item.owner_id = current_user.id
         db.session.add(item)
         db.session.commit()
         flash('Item created (id=%s)' % (item.id))
@@ -89,6 +90,7 @@ def item_create():
 def item_edit( id ):
     item = ItemModel.query.get_or_404(id)
     form = EditItemForm(item)
+    form.owner_id.choices = get_owner_id_choices()
     if form.validate_on_submit():
         del form.mod_create, form.mod_update
         form.populate_obj(item)
@@ -111,7 +113,7 @@ def item_view( id ):
     return render_template('item_view.html', cols=cols, item=item)
 
 
-@item.route('/admin/item/list')
+@item.route('/admin/item/list', methods=['GET','POST'])
 @get_list_opts('item_list_opts')
 @login_required
 def item_list():
@@ -134,7 +136,14 @@ def item_list():
         S['offset'] = (S['page'] - 1) * S['limit']
     session[opts_key] = S
 
-    if S['sort'] in cols:
+    if S['sort'] == 'owner_id':
+        from ..user.models import UserModel
+        rows = rows.outerjoin(UserModel)
+        if S['order'] == 'desc':
+            rows = rows.order_by(getattr( UserModel, 'keyname' ).desc())
+        else:
+            rows = rows.order_by(getattr( UserModel, 'keyname' ).asc())
+    elif S['sort'] in cols:
         if S['order'] == 'desc':
             rows = rows.order_by(getattr( ItemModel, S['sort'] ).desc())
         else:
@@ -153,15 +162,42 @@ def item_list():
 
 @item.route('/hello_orm')
 def hello_orm():
-    cols  = ItemModel.__table__.columns.keys()
-    rows = db.session.query(ItemModel)
 
+    rows = db.session.query(ItemModel)
+    #rows = rows.filter(ItemModel.id == 1000)
+
+    #from ..user.models import UserModel
+    #rows = rows.join(UserModel)
+    #rows = rows.order_by(getattr( UserModel, 'keyname' ).asc())
+    #rows = rows.filter(UserModel.id == 1000)
+
+    #rows = rows.join('owner')
+    rows = rows.outerjoin('owner')
+    rows = rows.order_by("item.owner_id IS NULL, user.keyname ASC")
+    #rows = rows.filter("user.id = 1000")
+
+    i = 0
+    cols_item = None
+    cols_user = None
     result = '<b>db.session.query(ItemModel)</b>'
-    result += '<br/>| '
-    for col in cols:
-        result += '<b>'+str(col)+'</b> | '
     for row in rows:
+        if cols_item == None and row.__table__.columns:
+            cols_item  = row.__table__.columns.keys()
+        if cols_user == None and row.owner.__table__.columns:
+            cols_user  = row.owner.__table__.columns.keys()
+        if i == 0:
+            result += '<br/>| '
+            for col in cols_item:
+                result += '<b>item.'+str(col)+'</b> | '
+            for col in cols_user:
+                result += '<b>user.'+str(col)+'</b> | '
+
         result += '<br/>| '
-        for col in cols:
+        for col in cols_item:
             result += '%s | ' % getattr( row, col )
+        for col in cols_user:
+            result += '%s | ' % getattr( row.owner, col ) if row.owner else 'None | '
+
+        i += 1
+
     return result
