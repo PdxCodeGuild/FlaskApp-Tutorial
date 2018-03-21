@@ -2,7 +2,7 @@
 
 /**
  * layout
- * see base.html
+ * @see base.html
  */
 #header { min-height: 80px; }
 #main   { min-height: 320px; }

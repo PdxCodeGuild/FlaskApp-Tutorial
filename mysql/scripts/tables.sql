@@ -9,29 +9,6 @@
 USE `flaskapp`;
 
 -- -------------------------------------------- --
--- item
--- -------------------------------------------- --
-DROP TABLE IF EXISTS `item`;
-CREATE TABLE `item` (
-    `id`            bigint(20)      NOT NULL AUTO_INCREMENT,
-    `active`        tinyint(1)      NOT NULL DEFAULT '1',
-    `keyname`       varchar(63)     NOT NULL,
-    `item_title`    varchar(255)    DEFAULT NULL,
-    `item_text`     text,
-    `mod_create`    datetime        DEFAULT CURRENT_TIMESTAMP,
-    `mod_update`    datetime        DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `item_keyname` (`keyname`),
-    KEY `item_active` (`active`),
-    KEY `item_title` (`item_title`),
-    KEY `item_update` (`mod_update`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
-DESCRIBE `item`;
-SELECT "table `item` created" AS MSG;
-
-
--- -------------------------------------------- --
 -- user
 -- -------------------------------------------- --
 DROP TABLE IF EXISTS `user`;
@@ -55,3 +32,30 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
 DESCRIBE `user`;
 SELECT "table `user` created" AS MSG;
+
+
+-- -------------------------------------------- --
+-- item
+-- -------------------------------------------- --
+DROP TABLE IF EXISTS `item`;
+CREATE TABLE `item` (
+    `id`            bigint(20)      NOT NULL AUTO_INCREMENT,
+    `active`        tinyint(1)      NOT NULL DEFAULT '1',
+    `keyname`       varchar(63)     NOT NULL,
+    `item_title`    varchar(255)    DEFAULT NULL,
+    `item_text`     text,
+    `mod_create`    datetime        DEFAULT CURRENT_TIMESTAMP,
+    `mod_update`    datetime        DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `owner_id`      bigint(20)      NULL,
+
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `item_keyname` (`keyname`),
+    KEY `item_active` (`active`),
+    KEY `item_title` (`item_title`),
+    KEY `item_update` (`mod_update`),
+    FOREIGN KEY (`owner_id`) REFERENCES user(`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
+DESCRIBE `item`;
+SELECT "table `item` created" AS MSG;
+
+

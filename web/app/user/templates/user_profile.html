@@ -20,7 +20,7 @@
 
 <!-- BLOCK: content -->
 {% block content %}
-<div id="item_list_panel" class="panel panel-info">
+<div id="item_list_panel" class="panel {% if user.active %}panel-info{% else %}panel-warning{% endif %}">
     <div class="panel-heading">
 <p style="float: right;">
 {# [ <a href="{{ url_for('.user_edit', id=user.id) }}">Update Profile</a> ] #}

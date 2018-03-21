@@ -16,7 +16,7 @@
 
 <!-- BLOCK: content -->
 {% block content %}
-<div id="item_list_panel" class="panel panel-info">
+<div id="item_list_panel" class="panel {% if user.active %}panel-info{% else %}panel-warning{% endif %}">
     <div class="panel-heading">
 <p style="float: right;">
 [ <a href="{{ url_for('.user_view', id=user.id) }}">View User</a> ]
@@ -39,6 +39,15 @@
     <td>{{ user[col] }}</td>
     </tr>
 {% endfor %}
+
+<tr>
+<td>User Items</td>
+<td><ol>
+{% for item in user.items %}
+    <li><a href="{{ url_for('item.item_view', id=item.id) }}">{{ item['keyname'] }}</a></li>
+{% endfor %}
+</ol></td>
+</tr>
 
 </table>
 </div>
