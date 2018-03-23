@@ -184,9 +184,7 @@ def user_list():
     if S['limit'] > 0:
         rows = rows.limit(S['limit'])
 
-    rows = rows.all()
-    rowcnt = len(rows)
-
+    rowcnt = rows.count()
     logging.debug('user_list - %s' % (rowcnt))
     return render_template('user_list.html', cols=cols_filtered,rows=rows,rowcnt=rowcnt,opts_key=opts_key)
 

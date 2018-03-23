@@ -118,6 +118,7 @@ def item_view( id ):
 @login_required
 def item_list():
     cols = ItemModel.__table__.columns.keys()
+    cols_filtered = list(filter(lambda x: x not in ['item_text'], cols))
     rows = db.session.query(ItemModel)
 
     opts_key = 'item_list_opts'
@@ -139,11 +140,17 @@ def item_list():
     if S['sort'] == 'owner_id':
         from ..user.models import UserModel
         rows = rows.outerjoin(UserModel)
+        #rows = rows.options( db.joinedload(ItemModel.owner_id).load_only("keyname", "user_email") )
+        rows = rows.options( \
+            db.Load(ItemModel).defer("item_text"), \
+            db.Load(UserModel).load_only("keyname", "user_email"), \
+        )
+
         if S['order'] == 'desc':
             rows = rows.order_by(getattr( UserModel, 'keyname' ).desc())
         else:
             rows = rows.order_by(getattr( UserModel, 'keyname' ).asc())
-    elif S['sort'] in cols:
+    elif S['sort'] in cols_filtered:
         if S['order'] == 'desc':
             rows = rows.order_by(getattr( ItemModel, S['sort'] ).desc())
         else:
@@ -153,11 +160,12 @@ def item_list():
     if S['limit'] > 0:
         rows = rows.limit(S['limit'])
 
-    rows = rows.all()
-    rowcnt = len(rows)
+    #rows = rows.all()
+    #rowcnt = len(rows)
+    rowcnt = rows.count()
 
     logging.debug('item_list - %s' % (rowcnt))
-    return render_template('item_list.html', cols=cols,rows=rows,rowcnt=rowcnt,opts_key=opts_key)
+    return render_template('item_list.html', cols=cols_filtered,rows=rows,rowcnt=rowcnt,opts_key=opts_key)
 
 
 @item.route('/hello_orm')
