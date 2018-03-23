@@ -15,8 +15,8 @@ def get_owner_id_choices():
 class ItemModel(db.Model):
     __tablename__ = 'item'
     id         = db.Column(db.BigInteger, autoincrement=True, primary_key=True)
-    keyname    = db.Column(db.String(63), nullable=False, index=True, unique=True, default='')
     active     = db.Column(db.Boolean, nullable=False, index=True, default=1)
+    keyname    = db.Column(db.String(63), nullable=False, index=True, unique=True, default='')
     item_title = db.Column(db.String(255))
     item_text  = db.Column(db.Text)
     mod_create = db.Column(db.DateTime, default=datetime.utcnow)

@@ -98,11 +98,13 @@
     {% if config['DEBUG'] %}
 <div id="debuginfo"><pre>
 DEBUG:
-{% if current_user.user_email %}LOGGED IN: {{ current_user.user_email }}{% else %}LOGGED OUT{% endif %}
-TEMPLATES: {% block templates %}base.html{% endblock %}
-REQUEST.ARGS: {{ request.args }}
-REQUEST.COOKIES: {{ request.cookies }}
-SESSION: {{ session }}
+{% if current_user.user_email %}<b>LOGGED IN:</b> {{ current_user.user_email }}{% else %}<b>LOGGED OUT</b>{% endif %}
+<b>TEMPLATES:</b> {% block templates %}base.html{% endblock %}
+<b>REQUEST.ARGS:</b> {{ request.args }}
+<b>REQUEST.COOKIES:</b> {{ request.cookies }}
+<b>SESSION:</b> {{ session }}
+<b>QUERIES :</b> {{ debug_queries() }}
+<b>DATETIME :</b> {{ current_datetime() }}
 </pre></div>
     {% endif %}
 

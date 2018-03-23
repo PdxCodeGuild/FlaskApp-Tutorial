@@ -78,3 +78,18 @@ def page_not_found(e):
 @app.errorhandler(410)
 def page_deleted(e):
     return render_template('410.html', error=e), 410
+
+
+# Utility functions available within templates
+@app.context_processor
+def utility_processor():
+    def current_datetime():
+        import datetime
+        return datetime.datetime.now().strftime("%Y/%m/%d @ %H:%M:%S")
+    def debug_queries():
+        from flask_sqlalchemy import get_debug_queries
+        return get_debug_queries()
+    return dict(\
+        current_datetime=current_datetime, \
+        debug_queries=debug_queries, \
+        )

@@ -15,11 +15,12 @@ def load_user(user_id):
     logging.info( "load_user(%s)" %  user_id)
     return UserModel.query.filter_by(user_email=user_id).first()
 
+
 class UserModel(db.Model):
     __tablename__ = 'user'
     id         = db.Column(db.BigInteger, autoincrement=True, primary_key=True)
     active     = db.Column(db.Boolean, nullable=False, index=True, default=1)
-    keyname    = db.Column(db.String(63), nullable=False, unique=True, index=True, default='')
+    keyname    = db.Column(db.String(63), nullable=False, index=True, unique=True, default='')
     user_email = db.Column(db.String(255), nullable=False, unique=True, index=True)
     user_pass  = db.Column(db.String(128))
     cnt_login  = db.Column(db.Integer, default=0)

@@ -1,8 +1,21 @@
 @charset "utf-8";
 
 /**
- * layout
- * @see base.html
+ * generic element attributes
+ */
+h1.condensed, h2.condensed, h3.condensed, h4.condensed { margin: 10px 0 5px 0; }
+
+form { padding: 15px; }
+.form-submit-buttons { padding-left: 15px; }
+
+.table-condensed { margin-bottom: 0; }
+.table-borderless td,
+.table-borderless th {
+    border: none !important;
+}
+
+/**
+ * layout elements defined in base.html
  */
 #header { min-height: 80px; }
 #main   { min-height: 320px; }
@@ -32,22 +45,3 @@
 #debuginfo {
     padding: 15px;
 }
-
-
-/**
- * generic element attributes
- */
-h1.condensed, h2.condensed, h3.condensed, h4.condensed { margin: 10px 0 5px 0; }
-
-form { padding: 15px; }
-.form-submit-buttons { padding-left: 15px; }
-
-.table-condensed { margin-bottom: 0; }
-.table-borderless td,
-.table-borderless th {
-    border: none !important;
-}
-
-
-
-
