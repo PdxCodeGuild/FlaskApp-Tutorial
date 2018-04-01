@@ -1,5 +1,4 @@
 import logging
-
 from flask import url_for
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -13,7 +12,7 @@ from .. import db, login_manager
 @login_manager.user_loader
 def load_user(user_id):
     logging.info( "load_user(%s)" %  user_id)
-    return UserModel.query.filter_by(user_email=user_id).first()
+    return UserModel.query.filter_by(id=user_id).first()
 
 
 class UserModel(db.Model):
@@ -27,17 +26,6 @@ class UserModel(db.Model):
     mod_login  = db.Column(db.DateTime)
     mod_create = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     mod_update = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
-    # 'back_populates' requires reciprocal relationship in ItemModel
-    # 'backref' creates both sides ; needs 'primaryjoin' because foreign key is on item table
-    # @see http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html
-    #items = db.relationship('ItemModel', back_populates='owner')
-    #items = db.relationship('ItemModel', backref='owner', primaryjoin='ItemModel.owner_id == UserModel.id')
-
-    def __init__(self, **kwargs):
-        super(UserModel, self).__init__(**kwargs)
-        if self.cnt_login is None:
-            self.cnt_login = 0
 
     @property
     def password(self):
@@ -61,7 +49,7 @@ class UserModel(db.Model):
         return self.active
 
     def get_id(self):
-        return self.user_email
+        return self.id
 
     def update_mod_login(self):
         self.cnt_login = self.cnt_login + 1
@@ -82,12 +70,28 @@ class UserModel(db.Model):
             'mod_create': self.mod_create,
             'mod_update': self.mod_update,
             #'items_url': url_for('api.get_user_items', id=self.id),
-            'item_count': self.items.count()
+            'items_count': self.user_items.count()
         }
         return json_user
 
+    def __init__(self, **kwargs):
+        super(UserModel, self).__init__(**kwargs)
+        self.id         = kwargs.get('id',        None)
+        self.active     = kwargs.get('active',    True)
+        self.keyname    = kwargs.get('keyname',   None)
+        self.user_email = kwargs.get('user_email',None)
+        self.cnt_login  = kwargs.get('cnt_login', 0)
+        self.mod_login  = kwargs.get('mod_login', None)
+        self.mod_create = kwargs.get('mod_create',None)
+        self.mod_update = kwargs.get('mod_update',None)
+        logging.debug( "UserModel.__init__: %r" %  (self))
+        logging.debug( "ItemModel.__init__: items=%r" %  (self.items))
+        logging.debug( "ItemModel.__init__: user_items=%r" %  (self.user_items))
+
     def __repr__(self):
-        return '<UserModel: id="%r", keyname="%r">' % (self.id, self.keyname)
+        return '<UserModel(id=%r,active=%r,keyname=%r,user_email=%r,cnt_login=%r,mod_login=%r,mod_create=%r,mod_update=%r)>' \
+                % (self.id,self.active,self.keyname,self.user_email,self.cnt_login,self.mod_login,self.mod_create,self.mod_update)
 
     def __str__(self):
-        return 'User: "%r"' % (self.keyname)
+        return 'UserModel:%r,%r' % (self.id,self.keyname)
+

@@ -59,3 +59,19 @@ DESCRIBE `item`;
 SELECT "table `item` created" AS MSG;
 
 
+-- -------------------------------------------- --
+-- item
+-- -------------------------------------------- --
+DROP TABLE IF EXISTS `item_user`;
+CREATE TABLE `item_user` (
+    `item_id`       bigint(20)      NOT NULL,
+    `user_id`       bigint(20)      NOT NULL,
+    `relation`      varchar(31)     NOT NULL DEFAULT 'editor',
+    PRIMARY KEY (`item_id`,`user_id`),
+    KEY `user_item` (`user_id`,`item_id`),
+    KEY `user_relation` (`relation`),
+    FOREIGN KEY (`item_id`) REFERENCES item(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES user(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
+DESCRIBE `item_user`;
+SELECT "table `item_user` created" AS MSG;

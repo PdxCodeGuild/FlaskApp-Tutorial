@@ -22,7 +22,7 @@
 [ <a href="{{ url_for('.user_view', id=user.id) }}">View User</a> ]
 [ <a href="{{ url_for('.user_edit', id=user.id) }}">Edit User</a> ]
 </p>
-        <h3 class="condensed">User '{{ user.keyname }}'</h3>
+        <h3 class="condensed">User '{{ user.keyname }}'{% if not user.active %} - inactive{% endif %}</h3>
     </div>
     <div class="panel-body">
 
@@ -42,11 +42,11 @@
 
 <tr>
 <td>User Items</td>
-<td><ol>
+<td><ul>
 {% for item in user.items %}
-    <li><a href="{{ url_for('item.item_view', id=item.id) }}">{{ item['keyname'] }}</a></li>
+    <li><a href="{{ url_for('item.item_view', id=item.id) }}">{{ item.keyname }}</a></li>
 {% endfor %}
-</ol></td>
+</ul></td>
 </tr>
 
 </table>

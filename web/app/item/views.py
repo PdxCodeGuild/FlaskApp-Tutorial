@@ -6,7 +6,8 @@ from flask_login import current_user, login_required
 from jinja2 import TemplateNotFound
 from .. import db, flash_errors
 from . import item
-from .models import ItemModel, get_owner_id_choices
+from .models import ItemModel, ItemUserModel, get_owner_id_choices
+from ..user.models import UserModel
 from .forms import CreatItemForm, EditItemForm
 from ..decorators import get_list_opts
 
@@ -91,8 +92,32 @@ def item_edit( id ):
     item = ItemModel.query.get_or_404(id)
     form = EditItemForm(item)
     form.owner_id.choices = get_owner_id_choices()
+    form.users_id.choices = get_owner_id_choices()
     if form.validate_on_submit():
         del form.mod_create, form.mod_update
+
+        # convert user_id data to ItemUserModel objects
+        # delete previous relations not in current selection
+        item_users = ItemUserModel.query.filter_by(item_id=id).all()
+        for item_user in item_users:
+            if not item_user.user_id in form.users_id.data:
+                logging.debug('1- item_edit( delete:%s )' % (item_user))
+                db.session.delete(item_user)
+                db.session.commit()
+        # insert/update current relations
+        for user_id in form.users_id.data:
+            item_user = ItemUserModel.query.filter_by(item_id=id,user_id=user_id).first()
+            if not item_user:
+                item_user = ItemUserModel(item_id=id,user_id=user_id,relation='editor')
+                logging.debug('2- item_edit( insert:%s )' % (item_user))
+                db.session.add(item_user)
+            elif item_user.relation != 'editor':
+                item_user.relation = 'editor'
+                logging.debug('3- item_edit( update:%s )' % (item_user))
+                db.session.add(item_user)
+        # remove form.users_id prior to populate_obj(item)
+        del form.users_id
+
         form.populate_obj(item)
         db.session.add(item)
         db.session.commit()
@@ -138,7 +163,6 @@ def item_list():
     session[opts_key] = S
 
     if S['sort'] == 'owner_id':
-        from ..user.models import UserModel
         rows = rows.outerjoin(UserModel)
         #rows = rows.options( db.joinedload(ItemModel.owner_id).load_only("keyname", "user_email") )
         rows = rows.options( \
@@ -160,10 +184,7 @@ def item_list():
     if S['limit'] > 0:
         rows = rows.limit(S['limit'])
 
-    #rows = rows.all()
-    #rowcnt = len(rows)
     rowcnt = rows.count()
-
     logging.debug('item_list - %s' % (rowcnt))
     return render_template('item_list.html', cols=cols_filtered,rows=rows,rowcnt=rowcnt,opts_key=opts_key)
 
@@ -208,4 +229,16 @@ def hello_orm():
 
         i += 1
 
+    return result
+
+
+@item.route('/hello_item_users')
+def hello_item_users():
+    rows = db.session.query(ItemModel)
+
+    result = '<b>db.session.query(ItemModel)</b>'
+    for row in rows:
+        result += '<br/>| %s | ' % (row)
+        for iu in row.item_users:
+            result += ' %s | ' % (iu.user)
     return result

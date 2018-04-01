@@ -189,3 +189,13 @@ def user_list():
     return render_template('user_list.html', cols=cols_filtered,rows=rows,rowcnt=rowcnt,opts_key=opts_key)
 
 
+@user.route('/hello_user_items')
+def hello_user_items():
+    rows = db.session.query(UserModel)
+
+    result = '<b>db.session.query(UserModel)</b>'
+    for row in rows:
+        result += '<br/>| %s | ' % (row)
+        for iu in row.user_items:
+            result += " %s | " % (iu.item)
+    return result

@@ -43,6 +43,14 @@ def hello_db():
     #stmt = "select * from item"
     #stmt = "select * from user"
     #stmt = "select * from user join item on user.id=item.owner_id"
+    #stmt = "select * from item_user"
+
+    #stmt = "SELECT i.id AS item_id, i.keyname, u.id AS user_id, u.keyname FROM item i JOIN item_user iu ON i.id = iu.item_id JOIN user u ON iu.user_id = u.id"
+    # users, cnt_items
+    #stmt = "SELECT u.keyname, COUNT(i.id) AS cnt_items FROM user u JOIN item_user iu ON u.id = iu.user_id JOIN item i ON i.id = iu.item_id GROUP BY u.keyname"
+    # items, cnt_users
+    #stmt = "SELECT i.keyname, COUNT(u.id) AS cnt_users FROM item i JOIN item_user iu ON i.id = iu.item_id JOIN user u ON u.id = iu.user_id GROUP BY i.keyname"
+
 
     #import pdb; pdb.set_trace()
     eng = db.create_engine(current_app.config['SQLALCHEMY_DATABASE_URI'])
