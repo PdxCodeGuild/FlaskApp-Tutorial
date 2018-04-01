@@ -98,8 +98,8 @@
     </td>
     {% for col in cols %}
         <td onclick="window.location='{{ url_for('.item_view', id=row.id) }}';">
-            {% if col == 'owner_id' and row[col] %}
-                <a href="{{ url_for('user.user_view', id=row[col]) }}">{{ row['owner'].keyname }}</a>
+            {% if col == 'owner_id' and row.owner %}
+                <a href="{{ url_for('user.user_view', id=row[col]) }}">{{ row.owner.keyname }}</a>
             {% else %}
                 {{ row[col] }}
             {% endif %}

@@ -1,5 +1,7 @@
+import logging
 from flask import url_for
 from datetime import datetime
+from sqlalchemy.ext.associationproxy import association_proxy
 from .. import db
 from ..user.models import UserModel
 
@@ -22,29 +24,73 @@ class ItemModel(db.Model):
     mod_create = db.Column(db.DateTime, default=datetime.utcnow)
     mod_update = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, index=True)
 
-    # 'back_populates' requires reciprocal relationship in UserModel ; 'backref' creates both sides
     # @see http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html
     owner_id   = db.Column(db.Integer, db.ForeignKey('user.id'))
-    #owner      = db.relationship('UserModel', back_populates='items')
     owner      = db.relationship('UserModel', backref='items')
+
+    # association proxy of "item_users" collection to "users_id" attribute for EditItemForm
+    # @see http://docs.sqlalchemy.org/en/rel_0_9/orm/extensions/associationproxy.html
+    users_id = association_proxy('item_users', 'user.id')
 
     def to_json(self):
         json_item = {
             #'url': url_for('api.get_item', id=self.id),
             'id'        : self.id,
-            'keyname'   : self.keyname,
             'active'    : self.active,
+            'keyname'   : self.keyname,
             'item_title': self.item_title,
             'item_text' : self.item_text,
             'mod_create': self.mod_create,
             'mod_update': self.mod_update,
             #'owner_url': url_for('api.get_user', id=self.owner_id),
             'owner_id'  : self.owner_id,
+            #'users_url': url_for('api.get_item_users', id=self.id),
+            'users_count': self.item_users.count()
         }
         return json_item
 
+    def __init__(self, **kwargs):
+        super(ItemModel, self).__init__(**kwargs)
+        self.id         = kwargs.get('id',        None)
+        self.active     = kwargs.get('active',    True)
+        self.keyname    = kwargs.get('keyname',   None)
+        self.item_title = kwargs.get('item_title',None)
+        self.item_text  = kwargs.get('item_text', 0)
+        self.mod_create = kwargs.get('mod_create',None)
+        self.mod_update = kwargs.get('mod_update',None)
+        logging.debug( "ItemModel.__init__: %r" %  (self))
+        logging.debug( "ItemModel.__init__: owner=%r" %  (self.owner))
+        logging.debug( "ItemModel.__init__: item_users=%r" %  (self.item_users))
+
     def __repr__(self):
-        return '<ItemModel: id="%r", keyname="%r">' % (self.id, self.keyname)
+        return '<ItemModel(id=%r,active=%r,keyname=%r,item_title=%r,item_text=%r,mod_create=%r,mod_update=%r)>' \
+                % (self.id,self.active,self.keyname,self.item_title,self.item_text,self.mod_create,self.mod_update)
 
     def __str__(self):
-        return 'Item: "%r"' % (self.keyname)
+        return 'ItemModel:%r,%r' % (self.id,self.keyname)
+
+
+class ItemUserModel(db.Model):
+    __tablename__ = 'item_user'
+    item_id  = db.Column(db.BigInteger, db.ForeignKey('item.id'), primary_key=True)
+    user_id  = db.Column(db.BigInteger, db.ForeignKey('user.id'), primary_key=True)
+    relation = db.Column(db.String(31), nullable=False, default='editor')
+
+    item = db.relationship("ItemModel", backref='item_users')
+    user = db.relationship("UserModel", backref='user_items')
+
+    def __init__(self, **kwargs):
+        super(ItemUserModel, self).__init__(**kwargs)
+        self.item_id = kwargs.get('item_id', None)
+        self.user_id = kwargs.get('user_id', None)
+        self.relation = kwargs.get('relation', 'editor')
+        logging.debug( "ItemUserModel.__init__: %r" %  (self))
+        logging.debug( "ItemUserModel.__init__: item=%r" %  (self.item))
+        logging.debug( "ItemUserModel.__init__: user=%r" %  (self.user))
+
+    def __repr__(self):
+        return '<ItemUserModel(item_id=%r,user_id=%r,relation=%r)>' % (self.item_id,self.user_id,self.relation)
+
+    def __str__(self):
+        return 'ItemUserModel:%r,%r,%r' % (self.item_id,self.user_id,self.relation)
+

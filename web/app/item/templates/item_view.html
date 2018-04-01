@@ -22,7 +22,7 @@
 [ <a href="{{ url_for('.item_view', id=item.id) }}">View Item</a> ]
 [ <a href="{{ url_for('.item_edit', id=item.id) }}">Edit Item</a> ]
 </p>
-        <h3 class="condensed">Item '{{ item.keyname }}'</h3>
+        <h3 class="condensed">Item '{{ item.keyname }}'{% if not item.active %} - inactive{% endif %}</h3>
     </div>
     <div class="panel-body">
 
@@ -44,7 +44,22 @@
 <td>Item Owner</td>
 <td>
     {% if item.owner %}
-        <a href="{{ url_for('user.user_view', id=item.owner_id) }}">{{ item.owner['keyname'] }} ({{ item.owner['user_email'] }})</a>
+        <a href="{{ url_for('user.user_view', id=item.owner_id) }}">{{ item.owner.keyname }} ({{ item.owner.user_email }})</a>
+    {% else %}
+        None
+    {% endif %}
+</td>
+</tr>
+
+<tr>
+<td>Item Editors</td>
+<td>
+    {% if item.item_users %}
+        <ul>
+        {% for iu in item.item_users %}
+            <li><a href="{{ url_for('user.user_view', id=iu.user_id) }}">{{ iu.user.keyname }} ({{ iu.user.user_email }})</a></li>
+        {% endfor %}
+        </ul>
     {% else %}
         None
     {% endif %}

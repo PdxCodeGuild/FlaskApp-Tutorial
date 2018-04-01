@@ -39,6 +39,7 @@ class EditItemForm(FlaskForm):
     mod_create = DateTimeField('Item Created')
     mod_update = DateTimeField('Item Updated')
     owner_id   = SelectField('Item Owner', choices=[], coerce=int)
+    users_id   = SelectMultipleField('Editors', choices=[], coerce=int)
     submit     = SubmitField('Update Item')
 
     def __init__(self, item, *args, **kwargs):
