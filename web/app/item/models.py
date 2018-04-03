@@ -34,7 +34,7 @@ class ItemModel(db.Model):
 
     def to_json(self):
         json_item = {
-            'url': url_for('api.get_item', id=self.id),
+            'url': url_for('api.get_item', id=self.id, _external=True),
             'id'        : self.id,
             'active'    : self.active,
             'keyname'   : self.keyname,
@@ -42,10 +42,10 @@ class ItemModel(db.Model):
             'item_text' : self.item_text,
             'mod_create': self.mod_create,
             'mod_update': self.mod_update,
-            'owner_url': url_for('api.get_user', id=self.owner_id),
+            'url_owner' : url_for('api.get_item_owner', id=self.id, _external=True),
             'owner_id'  : self.owner_id,
-            #'users_url': url_for('api.get_item_users', id=self.id),
-            'users_count': len(self.item_users)
+            'url_editor': url_for('api.get_item_editor', id=self.id, _external=True),
+            'editor_id' : [iu.user_id for iu in self.item_users]
         }
         return json_item
 
