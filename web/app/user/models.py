@@ -1,6 +1,7 @@
 import logging
-from flask import url_for
+from flask import current_app, url_for
 from datetime import datetime
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from .. import db, login_manager
 #from ..item.models import ItemModel
@@ -51,6 +52,21 @@ class UserModel(db.Model):
     def get_id(self):
         return self.id
 
+    def generate_auth_token(self, expires):
+        logging.debug( "generate_auth_token(%s)" %  expires)
+        s = Serializer(current_app.config['SECRET_KEY'],expires_in=expires)
+        return s.dumps({'id': self.id})
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return None
+        return UserModel.query.get(data['id'])
+
+
     def update_mod_login(self):
         self.cnt_login = self.cnt_login + 1
         self.mod_login = datetime.utcnow()
@@ -60,7 +76,7 @@ class UserModel(db.Model):
 
     def to_json(self):
         json_user = {
-            'url': url_for('api.get_user', id=self.id),
+            'url': url_for('api.get_user', id=self.id, _external=True),
             'id'        : self.id,
             'active'    : self.active,
             'keyname'   : self.keyname,
@@ -69,8 +85,10 @@ class UserModel(db.Model):
             'mod_login' : self.mod_login,
             'mod_create': self.mod_create,
             'mod_update': self.mod_update,
-            #'items_url': url_for('api.get_user_items', id=self.id),
-            'items_count': len(self.user_items)
+            'url_item_owner'   : url_for('api.get_user_item_owner', id=self.id, _external=True),
+            'count_item_owner' : len(self.items),
+            'url_item_editor'  : url_for('api.get_user_item_editor', id=self.id, _external=True),
+            'count_item_editor': len(self.user_items)
         }
         return json_user
 
