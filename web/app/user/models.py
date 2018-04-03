@@ -60,7 +60,7 @@ class UserModel(db.Model):
 
     def to_json(self):
         json_user = {
-            #'url': url_for('api.get_user', id=self.id),
+            'url': url_for('api.get_user', id=self.id),
             'id'        : self.id,
             'active'    : self.active,
             'keyname'   : self.keyname,
@@ -70,7 +70,7 @@ class UserModel(db.Model):
             'mod_create': self.mod_create,
             'mod_update': self.mod_update,
             #'items_url': url_for('api.get_user_items', id=self.id),
-            'items_count': self.user_items.count()
+            'items_count': len(self.user_items)
         }
         return json_user
 

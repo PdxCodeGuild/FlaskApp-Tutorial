@@ -1,7 +1,7 @@
 import logging
 import os
 
-from flask import current_app, flash, render_template
+from flask import current_app, flash, jsonify, render_template, request
 from markupsafe import Markup
 from app import db
 
@@ -80,6 +80,13 @@ def page_restricted(e):
 # Page Not Found
 @app.errorhandler(404)
 def page_not_found(e):
+    if request.accept_mimetypes.accept_json and not request.accept_mimetypes.accept_html:
+        response = jsonify({ \
+            'code': e.code, 'name': e.name, 'message': e.description, 'url': request.url \
+            #, 'error': dir(e), 'request': dir(request) \
+            })
+        response.status_code = 404
+        return response
     return render_template('404.html', error=e), 404
 
 # Deleted Page

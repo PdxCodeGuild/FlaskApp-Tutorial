@@ -5,11 +5,12 @@ from flask import abort, flash, redirect, render_template, request, session, url
 from flask_login import current_user, login_required
 from jinja2 import TemplateNotFound
 from .. import db, flash_errors
+from ..decorators import get_list_opts
+from ..user.models import UserModel
 from . import item
 from .models import ItemModel, ItemUserModel, get_owner_id_choices
-from ..user.models import UserModel
 from .forms import CreatItemForm, EditItemForm
-from ..decorators import get_list_opts
+
 
 @item.route('/item/', defaults={'page': 'index'})
 @item.route('/item/<page>/')
