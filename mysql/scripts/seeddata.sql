@@ -9,9 +9,10 @@
 USE `flaskapp`;
 
 DELETE FROM `user`;
-INSERT INTO `user` (user_role,keyname,user_email) VALUES (4,"admin","admin@flaskapp.com");
-INSERT INTO `user` (user_role,keyname,user_email) VALUES (1,"user","user@flaskapp.com");
-INSERT INTO `user` (user_role,keyname,user_email) VALUES (0,"user2","user2@flaskapp.com");
+INSERT INTO `user` (user_role,keyname,user_email) VALUES (3,"admin","admin@flaskapp.com");
+INSERT INTO `user` (user_role,keyname,user_email) VALUES (2,"edit","user2@flaskapp.com");
+INSERT INTO `user` (user_role,keyname,user_email) VALUES (1,"view","user1@flaskapp.com");
+INSERT INTO `user` (user_role,keyname,user_email) VALUES (0,"none","user0@flaskapp.com");
 OPTIMIZE TABLE `user`;
 
 DELETE FROM `item`;

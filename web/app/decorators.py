@@ -50,7 +50,7 @@ def get_list_opts( session_key='list_opts' ):
 
             if status in ['all','active','inactive']:
                 S['status'] = status
-            if user_role in ['-1','0','1','2','4']:
+            if user_role in ['-1','0','1','2','3']:
                 S['user_role'] = int(user_role)
             if len(sort) > 0 and sort != S['sort']:
                 S['sort']  = sort

@@ -17,8 +17,8 @@
 <!-- BLOCK: content -->
 {% block content %}
 <div id="item_edit_panel" class="panel {%
-        if form.user_role.data == '4' %}panel-success{%
-        elif form.user_role.data == '0' %}panel-danger{%
+        if form.user_role.data == config['USER_ROLE_ADMIN']|string %}panel-success{%
+        elif form.user_role.data == config['USER_ROLE_NONE']|string %}panel-danger{%
         else %}panel-info{%
         endif %}">
     <div class="panel-heading">
@@ -26,7 +26,7 @@
 [ <a href="{{ url_for('.user_view', id=form.id.data) }}">View User</a> ]
 [ <a href="{{ url_for('.user_edit', id=form.id.data) }}">Edit User</a> ]
 </p>
-        <h3 class="condensed">User - '{{ form.user.keyname }}'</h3>
+        <h3 class="condensed">User '{{ form.user.keyname }}'</h3>
     </div>
     <div class="panel-body">
 
