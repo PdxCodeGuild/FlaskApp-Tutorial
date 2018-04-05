@@ -26,7 +26,13 @@ class AppConfig(object):
     USER_ROLE_NONE = 0
     USER_ROLE_VIEW = 1
     USER_ROLE_EDIT = 2
-    USER_ROLE_ADMIN = 4
+    USER_ROLE_ADMIN = 3
+    USER_ROLE = {
+        USER_ROLE_NONE: 'Inactive',
+        USER_ROLE_VIEW: 'User',
+        USER_ROLE_EDIT: 'Editor',
+        USER_ROLE_ADMIN: 'Administrator',
+    }
 
     @staticmethod
     def init_app(app):

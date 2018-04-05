@@ -1,5 +1,6 @@
 import re
 
+from flask import current_app
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, DecimalField, FloatField, IntegerField, \
     DateTimeField, DateField, \
@@ -8,9 +9,7 @@ from wtforms import BooleanField, DecimalField, FloatField, IntegerField, \
     HiddenField, SubmitField
 from wtforms.validators import Email, EqualTo, InputRequired, Length
 from wtforms import ValidationError
-#from flask_pagedown.fields import PageDownField
 from .models import UserModel
-
 
 def filter_username(data):
     return re.sub('[^a-z0-9_-]', '', str(data).lower())
@@ -55,8 +54,8 @@ class CreatUserForm(FlaskForm):
 
 class EditUserForm(FlaskForm):
     id         = HiddenField('id')
-    user_role  = SelectField('User Role')
     keyname    = StringField('Username', validators=[InputRequired(),Length(2,63),validate_username], filters=[filter_username])
+    user_role  = SelectField('User Role')
     user_email = StringField('Email', validators=[InputRequired(),Length(1,63),Email(),validate_usermail], filters=[filter_useremail])
     password   = PasswordField('Password', validators=[EqualTo('password2',message="Passwords must match.")])
     password2  = PasswordField('Confirm Password')
@@ -68,5 +67,10 @@ class EditUserForm(FlaskForm):
 
     def __init__(self, user, *args, **kwargs):
         super(EditUserForm, self).__init__(*args, **kwargs)
-        self.user_role.choices = [('4','Administrator'),('2','Editor'),('1','User'),('0','Inactive')]
+        self.user_role.choices = [
+            (str(current_app.config['USER_ROLE_ADMIN']),current_app.config['USER_ROLE'][current_app.config['USER_ROLE_ADMIN']]),
+            (str(current_app.config['USER_ROLE_EDIT']), current_app.config['USER_ROLE'][current_app.config['USER_ROLE_EDIT']]),
+            (str(current_app.config['USER_ROLE_VIEW']), current_app.config['USER_ROLE'][current_app.config['USER_ROLE_VIEW']]),
+            (str(current_app.config['USER_ROLE_NONE']), current_app.config['USER_ROLE'][current_app.config['USER_ROLE_NONE']]),
+            ]
         self.user = user

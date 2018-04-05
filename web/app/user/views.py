@@ -127,8 +127,8 @@ def user_create():
 def user_edit( id ):
     user = UserModel.query.get_or_404(id)
     form = EditUserForm(user)
-    del form.cnt_login, form.mod_login, form.mod_create, form.mod_update
     if form.validate_on_submit():
+        del form.cnt_login, form.mod_login, form.mod_create, form.mod_update
         if form.password.data == '':
             del form.password
         form.populate_obj(user)
