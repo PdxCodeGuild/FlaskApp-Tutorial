@@ -22,6 +22,12 @@ class AppConfig(object):
     SQLALCHEMY_POOL_RECYCLE = 30
     SQLALCHEMY_MAX_OVERFLOW = 2
 
+    # user.user_role
+    USER_ROLE_NONE = 0
+    USER_ROLE_VIEW = 1
+    USER_ROLE_EDIT = 2
+    USER_ROLE_ADMIN = 4
+
     @staticmethod
     def init_app(app):
         pass

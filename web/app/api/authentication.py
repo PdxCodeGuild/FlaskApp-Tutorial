@@ -30,7 +30,7 @@ def auth_error():
 @api.before_request
 @auth.login_required
 def before_request():
-    if not g.current_user.active:
+    if not g.current_user.user_role:
         return forbidden('Inactive Account')
 
 @api.route('/token')

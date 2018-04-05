@@ -1,7 +1,7 @@
 import logging
 import math
 
-from flask import abort, flash, redirect, render_template, request, session, url_for
+from flask import abort, current_app, flash, redirect, render_template, request, session, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from jinja2 import TemplateNotFound
 from .. import db, flash_errors
@@ -75,14 +75,15 @@ def user_action():
         if action == 'active':
             for id in user_ids:
                 user = UserModel.query.get_or_404(id)
-                user.active = True
-                db.session.add(user)
+                if user.user_role == current_app.config['USER_ROLE_NONE']:
+                    user.user_role = current_app.config['USER_ROLE_VIEW']
+                    db.session.add(user)
             db.session.commit()
             flash('Users Activated (id='+id_str+')')
         if action == 'inactive':
             for id in user_ids:
                 user = UserModel.query.get_or_404(id)
-                user.active = False
+                user.user_role = current_app.config['USER_ROLE_NONE']
                 db.session.add(user)
             db.session.commit()
             flash('Users Deactivated (id='+id_str+')')
@@ -161,8 +162,10 @@ def user_list():
     opts_key = 'user_list_opts'
     S = session[opts_key]
 
-    if S['status'] in ['active', 'inactive']:
-        rows = rows.filter(UserModel.active == (S['status'] == 'active'))
+    if S['user_role'] == current_app.config['USER_ROLE_NONE']:
+        rows = rows.filter(UserModel.user_role == S['user_role'])
+    elif S['user_role'] >= current_app.config['USER_ROLE_VIEW']:
+        rows = rows.filter(UserModel.user_role >= S['user_role'])
 
     S['itemcnt'] = rows.count()
     S['pagecnt'] = int(math.ceil( float(S['itemcnt'])/float(S['limit']) ))

@@ -16,7 +16,11 @@
 
 <!-- BLOCK: content -->
 {% block content %}
-<div id="item_edit_panel" class="panel {% if form.active.data %}panel-info{% else %}panel-warning{% endif %}">
+<div id="item_edit_panel" class="panel {%
+        if form.user_role.data == '4' %}panel-success{%
+        elif form.user_role.data == '0' %}panel-danger{%
+        else %}panel-info{%
+        endif %}">
     <div class="panel-heading">
 <p style="float: right;">
 [ <a href="{{ url_for('.user_view', id=form.id.data) }}">View User</a> ]
@@ -47,8 +51,8 @@
         {{ form.password2(class_='form-control',placeholder='confirmation') }}
     </div>
     <div class="form-group">
-        {{ form.active.label }}
-        {{ form.active(class_='form-control') }}
+        {{ form.user_role.label }}
+        {{ form.user_role(class_='form-control') }}
     </div>
     {{ form.submit(class_='btn btn-primary') }}
     <span class="form-submit-buttons">

@@ -20,7 +20,10 @@
 
 <!-- BLOCK: content -->
 {% block content %}
-<div id="item_list_panel" class="panel {% if user.active %}panel-info{% else %}panel-warning{% endif %}">
+<div id="item_list_panel" class="panel {%
+        if user.user_role == 4 %}panel-success{%
+        else %}panel-info{%
+        endif %}">
     <div class="panel-heading">
 <p style="float: right;">
 {# [ <a href="{{ url_for('.user_edit', id=user.id) }}">Update Profile</a> ] #}
@@ -40,7 +43,17 @@
 {% for col in cols %}
     <tr>
     <td>{{ col }}</td>
-    <td>{{ user[col] }}</td>
+    <td>
+    {% if col == "user_role" %}{%
+        if user[col] == 4 %}Administrator{%
+        elif user[col] == 2 %}Editor{%
+        elif user[col] == 1 %}User{%
+        else %}Inactive{%
+        endif %}
+    {% else %}
+        {{ user[col] }}
+    {% endif %}
+    </td>
     </tr>
 {% endfor %}
 

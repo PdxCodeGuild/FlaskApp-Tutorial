@@ -46,22 +46,19 @@
 </tr>
 <tr>
 <td>
-    [ <a href="{{ url_for('.user_create') }}">Create User</a> ]
+    <a href="{{ url_for('.user_create') }}" class="btn btn-default btn-sm" role="button">New User...</a>
 </td>
 <td class="text-right">
-    {% if session[opts_key]['status'] == 'active' %}
-        [<a href="{{ url_for('.user_list') }}?status=all">All</a>]
-        [Active]
-        [<a href="{{ url_for('.user_list') }}?status=inactive">Inactive</a>]
-    {% elif session[opts_key]['status'] == 'inactive' %}
-        [<a href="{{ url_for('.user_list') }}?status=all">All</a>]
-        [<a href="{{ url_for('.user_list') }}?status=active">Active</a>]
-        [Inactive]
-    {% else %}
-        [All]
-        [<a href="{{ url_for('.user_list') }}?status=active">Active</a>]
-        [<a href="{{ url_for('.user_list') }}?status=inactive">Inactive</a>]
-    {% endif %}
+    <div id="list-user-role" class="form-group-sm">
+        <label for="user_role" class="sr-only">Role</label>
+        <select id="user_role" name="user_role" class="form-control" onchange="window.location='{{ url_for('.user_list') }}?user_role='+this.value;">
+            <option value="-1"{% if session[opts_key]['user_role'] == -1 %} selected{% endif %}>All Users</option>
+            <option value="4"{% if session[opts_key]['user_role'] == 4 %} selected{% endif %}>Administrators</option>
+            <option value="2"{% if session[opts_key]['user_role'] == 2 %} selected{% endif %}>Editors</option>
+            <option value="1"{% if session[opts_key]['user_role'] == 1 %} selected{% endif %}>Users</option>
+            <option value="0"{% if session[opts_key]['user_role'] == 0 %} selected{% endif %}>Inactive</option>
+        </select>
+    </div>
 </td>
 </tr>
 </table>

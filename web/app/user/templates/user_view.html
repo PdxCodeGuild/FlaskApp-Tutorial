@@ -16,13 +16,17 @@
 
 <!-- BLOCK: content -->
 {% block content %}
-<div id="item_list_panel" class="panel {% if user.active %}panel-info{% else %}panel-warning{% endif %}">
+<div id="item_list_panel" class="panel {%
+        if user.user_role == 4 %}panel-success{%
+        elif user.user_role == 0 %}panel-danger{%
+        else %}panel-info{%
+        endif %}">
     <div class="panel-heading">
 <p style="float: right;">
 [ <a href="{{ url_for('.user_view', id=user.id) }}">View User</a> ]
 [ <a href="{{ url_for('.user_edit', id=user.id) }}">Edit User</a> ]
 </p>
-        <h3 class="condensed">User '{{ user.keyname }}'{% if not user.active %} - inactive{% endif %}</h3>
+        <h3 class="condensed">User '{{ user.keyname }}'</h3>
     </div>
     <div class="panel-body">
 
@@ -36,7 +40,17 @@
 {% for col in cols %}
     <tr>
     <td>{{ col }}</td>
-    <td>{{ user[col] }}</td>
+    <td>
+    {% if col == "user_role" %}{%
+        if user[col] == 4 %}Administrator{%
+        elif user[col] == 2 %}Editor{%
+        elif user[col] == 1 %}User{%
+        else %}Inactive{%
+        endif %}
+    {% else %}
+        {{ user[col] }}
+    {% endif %}
+    </td>
     </tr>
 {% endfor %}
 
