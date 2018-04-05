@@ -14,8 +14,8 @@ USE `flaskapp`;
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
     `id`            bigint(20)      NOT NULL AUTO_INCREMENT,
-    `active`        tinyint(1)      NOT NULL DEFAULT '1',
     `keyname`       varchar(63)     NOT NULL,
+    `user_role`     tinyint(1)      NOT NULL DEFAULT '1',
     `user_email`    varchar(255)    DEFAULT NULL,
     `user_pass`     varchar(255) 	DEFAULT NULL,
     `cnt_login`     smallint(6)     DEFAULT '0',
@@ -25,7 +25,7 @@ CREATE TABLE `user` (
 
     PRIMARY KEY (`id`),
     UNIQUE KEY `user_keyname` (`keyname`),
-    KEY `user_active` (`active`),
+    KEY `user_role` (`user_role`),
     KEY `user_email` (`user_email`),
     KEY `user_login` (`mod_login`),
     KEY `user_create` (`mod_create`)

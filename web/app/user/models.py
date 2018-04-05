@@ -19,7 +19,7 @@ def load_user(user_id):
 class UserModel(db.Model):
     __tablename__ = 'user'
     id         = db.Column(db.BigInteger, autoincrement=True, primary_key=True)
-    active     = db.Column(db.Boolean, nullable=False, index=True, default=1)
+    user_role  = db.Column(db.SmallInteger, nullable=False, index=True, default=1)
     keyname    = db.Column(db.String(63), nullable=False, index=True, unique=True, default='')
     user_email = db.Column(db.String(255), nullable=False, unique=True, index=True)
     user_pass  = db.Column(db.String(128))
@@ -47,13 +47,12 @@ class UserModel(db.Model):
         return self.anonymous
 
     def is_active(self):
-        return self.active
+        return (self.user_role > current_app.config['USER_ROLE_NONE'])
 
     def get_id(self):
         return self.id
 
     def generate_auth_token(self, expires):
-        logging.debug( "generate_auth_token(%s)" %  expires)
         s = Serializer(current_app.config['SECRET_KEY'],expires_in=expires)
         return s.dumps({'id': self.id})
 
@@ -66,7 +65,6 @@ class UserModel(db.Model):
             return None
         return UserModel.query.get(data['id'])
 
-
     def update_mod_login(self):
         self.cnt_login = self.cnt_login + 1
         self.mod_login = datetime.utcnow()
@@ -78,7 +76,7 @@ class UserModel(db.Model):
         json_user = {
             'url': url_for('api.get_user', id=self.id, _external=True),
             'id'        : self.id,
-            'active'    : self.active,
+            'user_role' : self.user_role,
             'keyname'   : self.keyname,
             'user_email': self.user_email,
             'cnt_login' : self.cnt_login,
@@ -95,7 +93,7 @@ class UserModel(db.Model):
     def __init__(self, **kwargs):
         super(UserModel, self).__init__(**kwargs)
         self.id         = kwargs.get('id',        None)
-        self.active     = kwargs.get('active',    True)
+        self.user_role  = kwargs.get('user_role', current_app.config['USER_ROLE_VIEW'])
         self.keyname    = kwargs.get('keyname',   None)
         self.user_email = kwargs.get('user_email',None)
         self.cnt_login  = kwargs.get('cnt_login', 0)
@@ -107,8 +105,8 @@ class UserModel(db.Model):
         logging.debug( "ItemModel.__init__: user_items=%r" %  (self.user_items))
 
     def __repr__(self):
-        return '<UserModel(id=%r,active=%r,keyname=%r,user_email=%r,cnt_login=%r,mod_login=%r,mod_create=%r,mod_update=%r)>' \
-                % (self.id,self.active,self.keyname,self.user_email,self.cnt_login,self.mod_login,self.mod_create,self.mod_update)
+        return '<UserModel(id=%r,user_role=%r,keyname=%r,user_email=%r,cnt_login=%r,mod_login=%r,mod_create=%r,mod_update=%r)>' \
+                % (self.id,self.user_role,self.keyname,self.user_email,self.cnt_login,self.mod_login,self.mod_create,self.mod_update)
 
     def __str__(self):
         return 'UserModel:%r,%r' % (self.id,self.keyname)

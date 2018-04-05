@@ -55,7 +55,7 @@ class CreatUserForm(FlaskForm):
 
 class EditUserForm(FlaskForm):
     id         = HiddenField('id')
-    active     = BooleanField('Active')
+    user_role  = SelectField('User Role')
     keyname    = StringField('Username', validators=[InputRequired(),Length(2,63),validate_username], filters=[filter_username])
     user_email = StringField('Email', validators=[InputRequired(),Length(1,63),Email(),validate_usermail], filters=[filter_useremail])
     password   = PasswordField('Password', validators=[EqualTo('password2',message="Passwords must match.")])
@@ -68,4 +68,5 @@ class EditUserForm(FlaskForm):
 
     def __init__(self, user, *args, **kwargs):
         super(EditUserForm, self).__init__(*args, **kwargs)
+        self.user_role.choices = [('4','Administrator'),('2','Editor'),('1','User'),('0','Inactive')]
         self.user = user

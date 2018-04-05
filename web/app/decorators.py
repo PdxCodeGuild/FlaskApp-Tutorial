@@ -28,26 +28,30 @@ def get_list_opts( session_key='list_opts' ):
             if not session_key in session:
                 logging.debug('create session[%s]' % (session_key))
                 session[session_key] = { \
-                    'itemcnt' : 0, \
-                    'pagecnt' : 0, \
-                    'status'  : 'all', \
-                    'sort'    : 'id', \
-                    'order'   : 'asc', \
-                    'offset'  : 0, \
-                    'limit'   : 10, \
-                    'page'    : 1, \
+                    'itemcnt'   : 0, \
+                    'pagecnt'   : 0, \
+                    'status'    : 'all', \
+                    'user_role' : -1, \
+                    'sort'      : 'id', \
+                    'order'     : 'asc', \
+                    'offset'    : 0, \
+                    'limit'     : 10, \
+                    'page'      : 1, \
                     }
 
             # get updates
             S = session[session_key]
-            status = request.values.get('status', S['status'])
-            sort   = request.values.get('sort',   S['sort'])
-            order  = request.values.get('order',  S['order'])
-            limit  = int(request.values.get('limit', S['limit']))
-            page   = int(request.values.get('page', S['page']))
+            status    = request.values.get('status',    S['status'])
+            user_role = request.values.get('user_role', S['user_role'])
+            sort      = request.values.get('sort',      S['sort'])
+            order     = request.values.get('order',     S['order'])
+            limit     = int(request.values.get('limit', S['limit']))
+            page      = int(request.values.get('page',  S['page']))
 
             if status in ['all','active','inactive']:
                 S['status'] = status
+            if user_role in ['-1','0','1','2','4']:
+                S['user_role'] = int(user_role)
             if len(sort) > 0 and sort != S['sort']:
                 S['sort']  = sort
                 S['order'] = 'asc'
