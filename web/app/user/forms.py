@@ -11,6 +11,7 @@ from wtforms.validators import Email, EqualTo, InputRequired, Length
 from wtforms import ValidationError
 from .models import UserModel
 
+
 def filter_username(data):
     return re.sub('[^a-z0-9_-]', '', str(data).lower())
 

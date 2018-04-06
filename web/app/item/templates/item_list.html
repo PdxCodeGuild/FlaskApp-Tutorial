@@ -97,7 +97,12 @@
 </tr>
 
 {% for row in rows %}
-    <tr>
+    <tr class="{%
+        if row.item_status == config['ITEM_STATUS_COMPLETED'] %}success{%
+        elif row.item_status == config['ITEM_STATUS_DRAFT'] %}warning{%
+        elif row.item_status == config['ITEM_STATUS_HIDDEN'] %}danger{%
+        else %}{%
+        endif %}">
     <td>
         <input type="checkbox" name="item_id" value="{{row.id}}">
     </td>
