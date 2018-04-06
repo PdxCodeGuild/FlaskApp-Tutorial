@@ -17,7 +17,7 @@
 {% block content %}
 <form class="form-inline" action="{{ url_for('.user_action') }}" method="post">
 
-<div id="item_list_panel" class="panel panel-info">
+<div id="user_list_panel" class="panel panel-info">
     <div class="panel-heading">
 
 <div class="table-responsive">
@@ -75,7 +75,6 @@
     </div> <!-- end class="panel-heading" -->
     <div class="panel-body">
 
-
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <tr>
@@ -127,8 +126,10 @@
         <label for="action" class="sr-only">Action</label>
         <select id="action" name="action" class="form-control">
             <option value="">Selected Users...</option>
-            <option value="active">Set Active</option>
-            <option value="inactive">Set Inactive</option>
+            <option value="admin">Set Role '{{ config['USER_ROLE'][config['USER_ROLE_ADMIN']] }}'</option>
+            <option value="edit">Set Role '{{ config['USER_ROLE'][config['USER_ROLE_EDIT']] }}'</option>
+            <option value="view">Set Role '{{ config['USER_ROLE'][config['USER_ROLE_VIEW']] }}'</option>
+            <option value="none">Set Role '{{ config['USER_ROLE'][config['USER_ROLE_NONE']] }}'</option>
             <option value="delete">Delete</option>
         </select>
     </div>

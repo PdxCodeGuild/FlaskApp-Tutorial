@@ -16,13 +16,18 @@
 
 <!-- BLOCK: content -->
 {% block content %}
-<div id="item_list_panel" class="panel {% if item.active %}panel-info{% else %}panel-warning{% endif %}">
+<div id="item_list_panel" class="panel {%
+        if item.item_status == config['ITEM_STATUS_APPROVED'] %}panel-success{%
+        elif item.item_status == config['ITEM_STATUS_DRAFT'] %}panel-warning{%
+        elif item.item_status == config['ITEM_STATUS_HIDDEN'] %}panel-danger{%
+        else %}panel-info{%
+        endif %}">
     <div class="panel-heading">
 <p style="float: right;">
 [ <a href="{{ url_for('.item_view', id=item.id) }}">View Item</a> ]
 [ <a href="{{ url_for('.item_edit', id=item.id) }}">Edit Item</a> ]
 </p>
-        <h3 class="condensed">Item '{{ item.keyname }}'{% if not item.active %} - inactive{% endif %}</h3>
+        <h3 class="condensed">Item '{{ item.keyname }}'</h3>
     </div>
     <div class="panel-body">
 
@@ -36,7 +41,13 @@
 {% for col in cols %}
     <tr>
     <td>{{ col }}</td>
-    <td>{{ item[col] }}</td>
+    <td>
+    {% if col == "item_status" %}
+        {{ config['ITEM_STATUS'][(item[col]|int)] }}
+    {% else %}
+        {{ item[col] }}
+    {% endif %}
+    </td>
     </tr>
 {% endfor %}
 

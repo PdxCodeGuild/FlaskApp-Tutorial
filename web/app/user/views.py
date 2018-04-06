@@ -34,7 +34,7 @@ def user_login():
             user.update_mod_login()
             login_user(user, form.remember.data)
             return redirect(form.next.data or url_for('main.main_home'))
-        flash('Invalid username or password','warning')
+        flash('Invalid username or password','danger')
     else:
         flash_errors(form)
     form.next.data = request.args.get('next') or url_for('main.main_home')
@@ -45,7 +45,7 @@ def user_login():
 #@login_required
 def user_logout():
     logout_user()
-    flash('You have been logged out.')
+    flash('You have been logged out.','success')
     return redirect(url_for('main.main_page', page='index'))
 
 
@@ -71,22 +71,22 @@ def user_action():
                 user = UserModel.query.get_or_404(id)
                 db.session.delete(user)
             db.session.commit()
-            flash('Users Deleted (id='+id_str+')')
-        if action == 'active':
+            flash('Users Deleted (id='+id_str+')','success')
+        if action in ['admin','edit','view','none']:
+            new_role = current_app.config['USER_ROLE_ADMIN']
+            if action == 'edit':
+                new_role = current_app.config['USER_ROLE_EDIT']
+            elif action == 'view':
+                new_role = current_app.config['USER_ROLE_VIEW']
+            elif action == 'none':
+                new_role = current_app.config['USER_ROLE_NONE']
             for id in user_ids:
                 user = UserModel.query.get_or_404(id)
-                if user.user_role == current_app.config['USER_ROLE_NONE']:
-                    user.user_role = current_app.config['USER_ROLE_VIEW']
+                if user.user_role != new_role:
+                    user.user_role = new_role
                     db.session.add(user)
             db.session.commit()
-            flash('Users Activated (id='+id_str+')')
-        if action == 'inactive':
-            for id in user_ids:
-                user = UserModel.query.get_or_404(id)
-                user.user_role = current_app.config['USER_ROLE_NONE']
-                db.session.add(user)
-            db.session.commit()
-            flash('Users Deactivated (id='+id_str+')')
+            flash("Users set %s (id=%s)" % (current_app.config['USER_ROLE'][new_role],id_str),'success')
     logging.info('user_action - action:%s, user_ids:%s' % (action, id_str))
     return redirect(url_for('.user_list'))
 
@@ -97,7 +97,7 @@ def user_delete( id ):
     user = UserModel.query.get_or_404(id)
     db.session.delete(user)
     db.session.commit()
-    flash('User deleted (id=%s)' % (user.id))
+    flash('User deleted (id=%s)' % (user.id),'success')
     logging.info('user_delete( id:%s )' % (user.id))
     return redirect(url_for('.user_list'))
 
@@ -111,7 +111,7 @@ def user_create():
         form.populate_obj(user)
         db.session.add(user)
         db.session.commit()
-        flash('User created (id=%s)' % (user.id))
+        flash('User created (id=%s)' % (user.id),'success')
         logging.info('user_create( id:%s )' % (user.id))
         return redirect(url_for('.user_view', id=user.id))
     else:
@@ -134,7 +134,7 @@ def user_edit( id ):
         form.populate_obj(user)
         db.session.add(user)
         db.session.commit()
-        flash('User updated (id=%s)' % (user.id))
+        flash('User updated (id=%s)' % (user.id),'success')
         logging.info('user_edit( id:%s )' % (user.id))
         return redirect(url_for('.user_view', id=user.id))
     else:

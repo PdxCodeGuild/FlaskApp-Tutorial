@@ -33,6 +33,17 @@ class AppConfig(object):
         USER_ROLE_EDIT: 'Editor',
         USER_ROLE_ADMIN: 'Administrator',
     }
+    # item.item_status
+    ITEM_STATUS_HIDDEN = 0
+    ITEM_STATUS_DRAFT = 1
+    ITEM_STATUS_COMPLETED = 2
+    ITEM_STATUS_APPROVED = 3
+    ITEM_STATUS = {
+        ITEM_STATUS_HIDDEN: 'Hidden',
+        ITEM_STATUS_DRAFT: 'Draft',
+        ITEM_STATUS_COMPLETED: 'Completed',
+        ITEM_STATUS_APPROVED: 'Approved',
+    }
 
     @staticmethod
     def init_app(app):
