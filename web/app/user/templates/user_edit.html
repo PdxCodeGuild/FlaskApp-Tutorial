@@ -18,6 +18,7 @@
 {% block content %}
 <div id="user_edit_panel" class="panel {%
         if form.user_role.data == config['USER_ROLE_ADMIN'] %}panel-success{%
+        elif form.user_role.data == config['USER_ROLE_EDIT'] %}panel-warning{%
         elif form.user_role.data == config['USER_ROLE_NONE'] %}panel-danger{%
         else %}panel-info{%
         endif %}">

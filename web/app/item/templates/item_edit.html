@@ -17,7 +17,7 @@
 <!-- BLOCK: content -->
 {% block content %}
 <div id="item_edit_panel" class="panel {%
-        if form.item_status.data == config['ITEM_STATUS_APPROVED'] %}panel-success{%
+        if form.item_status.data == config['ITEM_STATUS_COMPLETED'] %}panel-success{%
         elif form.item_status.data == config['ITEM_STATUS_DRAFT'] %}panel-warning{%
         elif form.item_status.data == config['ITEM_STATUS_HIDDEN'] %}panel-danger{%
         else %}panel-info{%

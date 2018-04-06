@@ -97,7 +97,12 @@
 </tr>
 
 {% for row in rows %}
-    <tr>
+    <tr class="{%
+        if row.user_role == config['USER_ROLE_ADMIN'] %}success{%
+        elif row.user_role == config['USER_ROLE_EDIT'] %}warning{%
+        elif row.user_role == config['USER_ROLE_NONE'] %}danger{%
+        else %}{%
+        endif %}">
     <td>
         <input type="checkbox" name="user_id" value="{{row.id}}">
     </td>
