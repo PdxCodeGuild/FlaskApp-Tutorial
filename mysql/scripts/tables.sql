@@ -40,8 +40,8 @@ SELECT "table `user` created" AS MSG;
 DROP TABLE IF EXISTS `item`;
 CREATE TABLE `item` (
     `id`            bigint(20)      NOT NULL AUTO_INCREMENT,
-    `active`        tinyint(1)      NOT NULL DEFAULT '1',
     `keyname`       varchar(63)     NOT NULL,
+    `item_status`   tinyint(1)      NOT NULL DEFAULT '1',
     `item_title`    varchar(255)    DEFAULT NULL,
     `item_text`     text,
     `mod_create`    datetime        DEFAULT CURRENT_TIMESTAMP,
@@ -50,7 +50,7 @@ CREATE TABLE `item` (
 
     PRIMARY KEY (`id`),
     UNIQUE KEY `item_keyname` (`keyname`),
-    KEY `item_active` (`active`),
+    KEY `item_status` (`item_status`),
     KEY `item_title` (`item_title`),
     KEY `item_update` (`mod_update`),
     FOREIGN KEY (`owner_id`) REFERENCES user(`id`)

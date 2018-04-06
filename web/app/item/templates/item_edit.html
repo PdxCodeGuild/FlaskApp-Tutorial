@@ -16,7 +16,12 @@
 
 <!-- BLOCK: content -->
 {% block content %}
-<div id="item_edit_panel" class="panel {% if form.active.data %}panel-info{% else %}panel-warning{% endif %}">
+<div id="item_edit_panel" class="panel {%
+        if form.item_status.data == config['ITEM_STATUS_APPROVED'] %}panel-success{%
+        elif form.item_status.data == config['ITEM_STATUS_DRAFT'] %}panel-warning{%
+        elif form.item_status.data == config['ITEM_STATUS_HIDDEN'] %}panel-danger{%
+        else %}panel-info{%
+        endif %}">
     <div class="panel-heading">
 <p style="float: right;">
 [ <a href="{{ url_for('.item_view', id=form.id.data) }}">View Item</a> ]
@@ -51,8 +56,8 @@
         {{ form.item_text(class_='form-control',placeholder='Text') }}
     </div>
     <div class="form-group">
-        {{ form.active.label }}
-        {{ form.active(class_='form-control') }}
+        {{ form.item_status.label }}
+        {{ form.item_status(class_='form-control') }}
     </div>
     {{ form.submit(class_='btn btn-primary') }}
     <span class="form-submit-buttons">

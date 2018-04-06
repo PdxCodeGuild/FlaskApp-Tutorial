@@ -1,7 +1,7 @@
 import logging
 import math
 
-from flask import abort, flash, redirect, render_template, request, session, url_for
+from flask import abort, current_app, flash, redirect, render_template, request, session, url_for
 from flask_login import current_user, login_required
 from jinja2 import TemplateNotFound
 from .. import db, flash_errors
@@ -36,21 +36,22 @@ def item_action():
                 item = ItemModel.query.get_or_404(id)
                 db.session.delete(item)
             db.session.commit()
-            flash('Items Deleted (id='+id_str+')')
-        if action == 'active':
+            flash('Items Deleted (id='+id_str+')','success')
+        if action in ['approved','completed','draft','hidden']:
+            new_status = current_app.config['ITEM_STATUS_APPROVED']
+            if action == 'completed':
+                new_status = current_app.config['ITEM_STATUS_COMPLETED']
+            elif action == 'draft':
+                new_status = current_app.config['ITEM_STATUS_DRAFT']
+            elif action == 'hidden':
+                new_status = current_app.config['ITEM_STATUS_HIDDEN']
             for id in item_ids:
                 item = ItemModel.query.get_or_404(id)
-                item.active = True
-                db.session.add(item)
+                if item.item_status != new_status:
+                    item.item_status = new_status
+                    db.session.add(item)
             db.session.commit()
-            flash('Items Activated (id='+id_str+')')
-        if action == 'inactive':
-            for id in item_ids:
-                item = ItemModel.query.get_or_404(id)
-                item.active = False
-                db.session.add(item)
-            db.session.commit()
-            flash('Items Deactivated (id='+id_str+')')
+            flash("Items set %s (id=%s)" % (current_app.config['ITEM_STATUS'][new_status],id_str),'success')
     logging.info('item_action - action:%s, item_ids:%s' % (action, id_str))
     return redirect(url_for('.item_list'))
 
@@ -61,7 +62,7 @@ def item_delete( id ):
     item = ItemModel.query.get_or_404(id)
     db.session.delete(item)
     db.session.commit()
-    flash('Item deleted (id=%s)' % (item.id))
+    flash('Item deleted (id=%s)' % (item.id),'success')
     logging.info('item_delete( id:%s )' % (item.id))
     return redirect(url_for('.item_list'))
 
@@ -76,7 +77,7 @@ def item_create():
         item.owner_id = current_user.id
         db.session.add(item)
         db.session.commit()
-        flash('Item created (id=%s)' % (item.id))
+        flash('Item created (id=%s)' % (item.id),'success')
         logging.info('item_create( id:%s )' % (item.id))
         return redirect(url_for('.item_view', id=item.id))
     else:
@@ -122,7 +123,7 @@ def item_edit( id ):
         form.populate_obj(item)
         db.session.add(item)
         db.session.commit()
-        flash('Item updated (id=%s)' % (item.id))
+        flash('Item updated (id=%s)' % (item.id),'success')
         logging.info('item_edit( id:%s )' % (item.id))
         return redirect(url_for('.item_view', id=item.id))
     else:
@@ -150,8 +151,8 @@ def item_list():
     opts_key = 'item_list_opts'
     S = session[opts_key]
 
-    if S['status'] in ['active', 'inactive']:
-        rows = rows.filter(ItemModel.active == (S['status'] == 'active'))
+    if S['item_status'] >= current_app.config['ITEM_STATUS_HIDDEN']:
+        rows = rows.filter(ItemModel.item_status == S['item_status'])
 
     S['itemcnt'] = rows.count()
     S['pagecnt'] = int(math.ceil( float(S['itemcnt'])/float(S['limit']) ))

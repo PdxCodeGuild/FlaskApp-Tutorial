@@ -16,9 +16,9 @@
 
 <!-- BLOCK: content -->
 {% block content %}
-<div id="item_edit_panel" class="panel {%
-        if form.user_role.data == config['USER_ROLE_ADMIN']|string %}panel-success{%
-        elif form.user_role.data == config['USER_ROLE_NONE']|string %}panel-danger{%
+<div id="user_edit_panel" class="panel {%
+        if form.user_role.data == config['USER_ROLE_ADMIN'] %}panel-success{%
+        elif form.user_role.data == config['USER_ROLE_NONE'] %}panel-danger{%
         else %}panel-info{%
         endif %}">
     <div class="panel-heading">

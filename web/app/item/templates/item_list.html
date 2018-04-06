@@ -46,22 +46,27 @@
 </tr>
 <tr>
 <td>
-    [ <a href="{{ url_for('.item_create') }}">Create Item</a> ]
+    <a href="{{ url_for('.item_create') }}" class="btn btn-default btn-sm" role="button">New Item...</a>
 </td>
 <td class="text-right">
-    {% if session[opts_key]['status'] == 'active' %}
-        [<a href="{{ url_for('.item_list') }}?status=all">All</a>]
-        [Active]
-        [<a href="{{ url_for('.item_list') }}?status=inactive">Inactive</a>]
-    {% elif session[opts_key]['status'] == 'inactive' %}
-        [<a href="{{ url_for('.item_list') }}?status=all">All</a>]
-        [<a href="{{ url_for('.item_list') }}?status=active">Active</a>]
-        [Inactive]
-    {% else %}
-        [All]
-        [<a href="{{ url_for('.item_list') }}?status=active">Active</a>]
-        [<a href="{{ url_for('.item_list') }}?status=inactive">Inactive</a>]
-    {% endif %}
+    <div id="list-item-status" class="form-group-sm">
+        <label for="item_status" class="sr-only">Role</label>
+        <select id="item_status" name="item_status" class="form-control" onchange="window.location='{{ url_for('.item_list') }}?item_status='+this.value;">
+            <option value="-1"{% if session[opts_key]['item_status'] == -1 %} selected{% endif %}>All Items</option>
+            <option value="{{ config['ITEM_STATUS_DRAFT'] }}"{%
+                if session[opts_key]['item_status'] == config['ITEM_STATUS_DRAFT'] %} selected{% endif
+                %}>{{ config['ITEM_STATUS'][config['ITEM_STATUS_DRAFT']] }}</option>
+            <option value="{{ config['ITEM_STATUS_COMPLETED'] }}"{%
+                if session[opts_key]['item_status'] == config['ITEM_STATUS_COMPLETED'] %} selected{% endif
+                %}>{{ config['ITEM_STATUS'][config['ITEM_STATUS_COMPLETED']] }}</option>
+            <option value="{{ config['ITEM_STATUS_APPROVED'] }}"{%
+                if session[opts_key]['item_status'] == config['ITEM_STATUS_APPROVED'] %} selected{% endif
+                %}>{{ config['ITEM_STATUS'][config['ITEM_STATUS_APPROVED']] }}</option>
+            <option value="{{ config['ITEM_STATUS_HIDDEN'] }}"{%
+                if session[opts_key]['item_status'] == config['ITEM_STATUS_HIDDEN'] %} selected{% endif
+                %}>{{ config['ITEM_STATUS'][config['ITEM_STATUS_HIDDEN']] }}</option>
+        </select>
+    </div>
 </td>
 </tr>
 </table>
@@ -98,8 +103,10 @@
     </td>
     {% for col in cols %}
         <td onclick="window.location='{{ url_for('.item_view', id=row.id) }}';">
-            {% if col == 'owner_id' and row.owner %}
+            {% if col == "owner_id" and row.owner %}
                 <a href="{{ url_for('user.user_view', id=row[col]) }}">{{ row.owner.keyname }}</a>
+            {% elif col == "item_status" %}
+                {{ config['ITEM_STATUS'][(row[col]|int)] }}
             {% else %}
                 {{ row[col] }}
             {% endif %}
@@ -121,8 +128,10 @@
         <label for="action" class="sr-only">Action</label>
         <select id="action" name="action" class="form-control">
             <option value="">Selected Items...</option>
-            <option value="active">Set Active</option>
-            <option value="inactive">Set Inactive</option>
+            <option value="approved">Set Status '{{ config['ITEM_STATUS'][config['ITEM_STATUS_APPROVED']] }}'</option>
+            <option value="completed">Set Status '{{ config['ITEM_STATUS'][config['ITEM_STATUS_COMPLETED']] }}'</option>
+            <option value="draft">Set Status '{{ config['ITEM_STATUS'][config['ITEM_STATUS_DRAFT']] }}'</option>
+            <option value="hidden">Set Status '{{ config['ITEM_STATUS'][config['ITEM_STATUS_HIDDEN']] }}'</option>
             <option value="delete">Delete</option>
         </select>
     </div>

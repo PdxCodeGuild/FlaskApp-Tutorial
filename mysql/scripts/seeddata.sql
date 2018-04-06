@@ -16,12 +16,12 @@ INSERT INTO `user` (user_role,keyname,user_email) VALUES (0,"none","user0@flaska
 OPTIMIZE TABLE `user`;
 
 DELETE FROM `item`;
-INSERT INTO `item` (keyname,item_title,item_text) VALUES ("one","One","One here");
-INSERT INTO `item` (keyname,item_title,item_text) VALUES ("two","Two","Two here");
-INSERT INTO `item` (keyname,item_title,item_text) VALUES ("three","Three","Three here");
-INSERT INTO `item` (keyname,item_title,item_text) VALUES ("four","Four","Four here");
-INSERT INTO `item` (keyname,item_title,item_text) VALUES ("five","Five","Five here");
-INSERT INTO `item` (keyname,item_title,item_text) VALUES ("six","Six","Six here");
+INSERT INTO `item` (item_status,keyname,item_title,item_text) VALUES (3,"one","One","One here");
+INSERT INTO `item` (item_status,keyname,item_title,item_text) VALUES (2,"two","Two","Two here");
+INSERT INTO `item` (item_status,keyname,item_title,item_text) VALUES (1,"three","Three","Three here");
+INSERT INTO `item` (item_status,keyname,item_title,item_text) VALUES (0,"four","Four","Four here");
+INSERT INTO `item` (item_status,keyname,item_title,item_text) VALUES (3,"five","Five","Five here");
+INSERT INTO `item` (item_status,keyname,item_title,item_text) VALUES (3,"six","Six","Six here");
 OPTIMIZE TABLE `item`;
 
 
