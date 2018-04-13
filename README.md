@@ -1,5 +1,5 @@
 ## FlaskApp Tutorial
 
-Read the [Wiki](https://github.com/PdxCodeGuild/20180406-FlaskApp/wiki)
+Read the [Wiki](https://github.com/PdxCodeGuild/FlaskApp-Tutorial/wiki)
 
-![/admin/item/list/](https://raw.githubusercontent.com/PdxCodeGuild/20180406-FlaskApp/master/screenshots/admin_item_list.png)
+![/admin/item/list/](https://raw.githubusercontent.com/PdxCodeGuild/FlaskApp-Tutorial/master/screenshots/admin_item_list.png)
