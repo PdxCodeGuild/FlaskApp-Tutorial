@@ -4,8 +4,9 @@ import math
 from flask import abort, current_app, flash, redirect, render_template, request, session, url_for
 from flask_login import current_user, login_required
 from jinja2 import TemplateNotFound
+from .. import config_default as CONFIG
 from .. import db, flash_errors
-from ..decorators import get_list_opts
+from ..decorators import get_list_opts, role_required
 from ..user.models import UserModel
 from . import item
 from .models import ItemModel, ItemUserModel, get_owner_id_choices
@@ -24,7 +25,7 @@ def item_page(page):
 
 
 @item.route('/admin/item/action', methods=['POST'])
-@login_required
+@role_required(CONFIG.USER_ROLE_EDIT)
 def item_action():
     action   = request.values.get('action', '')
     item_ids = request.form.getlist('item_id')
@@ -33,10 +34,7 @@ def item_action():
     if action and item_ids:
         if action == 'delete':
             for id in item_ids:
-                item = ItemModel.query.get_or_404(id)
-                db.session.delete(item)
-            db.session.commit()
-            flash('Items Deleted (id='+id_str+')','success')
+                item_delete( id )
         if action in ['approved','completed','draft','hidden']:
             new_status = current_app.config['ITEM_STATUS_APPROVED']
             if action == 'completed':
@@ -51,24 +49,27 @@ def item_action():
                     item.item_status = new_status
                     db.session.add(item)
             db.session.commit()
-            flash("Items set %s (id=%s)" % (current_app.config['ITEM_STATUS'][new_status],id_str),'success')
+            flash("Items Set %s (id=%s)" % (current_app.config['ITEM_STATUS'][new_status],id_str),'success')
     logging.info('item_action - action:%s, item_ids:%s' % (action, id_str))
     return redirect(url_for('.item_list'))
 
 
 @item.route('/admin/item/delete/<int:id>', methods=['GET','POST'])
-@login_required
+@role_required(CONFIG.USER_ROLE_EDIT)
 def item_delete( id ):
     item = ItemModel.query.get_or_404(id)
-    db.session.delete(item)
-    db.session.commit()
-    flash('Item deleted (id=%s)' % (item.id),'success')
-    logging.info('item_delete( id:%s )' % (item.id))
+    if current_user.id == item.owner_id or current_user.user_role == current_app.config['USER_ROLE_ADMIN']:
+        db.session.delete(item)
+        db.session.commit()
+        flash('Item Deleted (id=%s)' % (item.id),'success')
+        logging.info('item_delete( id:%s )' % (item.id))
+    else:
+        flash('Permission Denied - Item Not Deleted ( id:%s )' % (item.id))
     return redirect(url_for('.item_list'))
 
 
 @item.route('/admin/item/create', methods=['GET','POST'])
-@login_required
+@role_required(CONFIG.USER_ROLE_EDIT)
 def item_create():
     item = ItemModel()
     form = CreatItemForm(item)
@@ -77,7 +78,7 @@ def item_create():
         item.owner_id = current_user.id
         db.session.add(item)
         db.session.commit()
-        flash('Item created (id=%s)' % (item.id),'success')
+        flash('Item Created (id=%s)' % (item.id),'success')
         logging.info('item_create( id:%s )' % (item.id))
         return redirect(url_for('.item_view', id=item.id))
     else:
@@ -89,7 +90,7 @@ def item_create():
 
 
 @item.route('/admin/item/edit/<int:id>', methods=['GET','POST'])
-@login_required
+@role_required(CONFIG.USER_ROLE_EDIT)
 def item_edit( id ):
     item = ItemModel.query.get_or_404(id)
     form = EditItemForm(item)
@@ -123,7 +124,7 @@ def item_edit( id ):
         form.populate_obj(item)
         db.session.add(item)
         db.session.commit()
-        flash('Item updated (id=%s)' % (item.id),'success')
+        flash('Item Updated (id=%s)' % (item.id),'success')
         logging.info('item_edit( id:%s )' % (item.id))
         return redirect(url_for('.item_view', id=item.id))
     else:
@@ -133,7 +134,7 @@ def item_edit( id ):
 
 
 @item.route('/admin/item/view/<int:id>')
-@login_required
+@role_required(CONFIG.USER_ROLE_EDIT)
 def item_view( id ):
     item = ItemModel.query.get_or_404(id)
     cols = ItemModel.__table__.columns.keys()
@@ -142,7 +143,7 @@ def item_view( id ):
 
 @item.route('/admin/item/list', methods=['GET','POST'])
 @get_list_opts('item_list_opts')
-@login_required
+@role_required(CONFIG.USER_ROLE_EDIT)
 def item_list():
     cols = ItemModel.__table__.columns.keys()
     cols_filtered = list(filter(lambda x: x not in ['item_text'], cols))
