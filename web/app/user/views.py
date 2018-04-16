@@ -4,11 +4,12 @@ import math
 from flask import abort, current_app, flash, redirect, render_template, request, session, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from jinja2 import TemplateNotFound
+from .. import config_default as CONFIG
 from .. import db, flash_errors
+from ..decorators import get_list_opts, role_required
 from . import user
 from .models import UserModel
 from .forms import CreatUserForm, EditUserForm, LoginForm
-from ..decorators import get_list_opts
 
 
 @user.route('/user/', defaults={'page': 'index'})
@@ -34,7 +35,7 @@ def user_login():
             user.update_mod_login()
             login_user(user, form.remember.data)
             return redirect(form.next.data or url_for('main.main_home'))
-        flash('Invalid username or password','danger')
+        flash('Invalid Username or Password','danger')
     else:
         flash_errors(form)
     form.next.data = request.args.get('next') or url_for('main.main_home')
@@ -59,7 +60,7 @@ def user_profile():
 
 
 @user.route('/admin/user/action', methods=['POST'])
-@login_required
+@role_required(CONFIG.USER_ROLE_EDIT)
 def user_action():
     action   = request.values.get('action', '')
     user_ids = request.form.getlist('user_id')
@@ -68,10 +69,7 @@ def user_action():
     if action and user_ids:
         if action == 'delete':
             for id in user_ids:
-                user = UserModel.query.get_or_404(id)
-                db.session.delete(user)
-            db.session.commit()
-            flash('Users Deleted (id='+id_str+')','success')
+                user_delete( id )
         if action in ['admin','edit','view','none']:
             new_role = current_app.config['USER_ROLE_ADMIN']
             if action == 'edit':
@@ -86,24 +84,24 @@ def user_action():
                     user.user_role = new_role
                     db.session.add(user)
             db.session.commit()
-            flash("Users set %s (id=%s)" % (current_app.config['USER_ROLE'][new_role],id_str),'success')
+            flash("Users Set %s (id=%s)" % (current_app.config['USER_ROLE'][new_role],id_str),'success')
     logging.info('user_action - action:%s, user_ids:%s' % (action, id_str))
     return redirect(url_for('.user_list'))
 
 
 @user.route('/admin/user/delete/<int:id>', methods=['GET','POST'])
-@login_required
+@role_required(CONFIG.USER_ROLE_ADMIN)
 def user_delete( id ):
     user = UserModel.query.get_or_404(id)
     db.session.delete(user)
     db.session.commit()
-    flash('User deleted (id=%s)' % (user.id),'success')
+    flash('User Deleted (id=%s)' % (user.id),'success')
     logging.info('user_delete( id:%s )' % (user.id))
     return redirect(url_for('.user_list'))
 
 
 @user.route('/admin/user/create', methods=['GET','POST'])
-@login_required
+@role_required(CONFIG.USER_ROLE_EDIT)
 def user_create():
     user = UserModel()
     form = CreatUserForm(user)
@@ -111,7 +109,7 @@ def user_create():
         form.populate_obj(user)
         db.session.add(user)
         db.session.commit()
-        flash('User created (id=%s)' % (user.id),'success')
+        flash('User Created (id=%s)' % (user.id),'success')
         logging.info('user_create( id:%s )' % (user.id))
         return redirect(url_for('.user_view', id=user.id))
     else:
@@ -123,7 +121,7 @@ def user_create():
 
 
 @user.route('/admin/user/edit/<int:id>', methods=['GET','POST'])
-@login_required
+@role_required(CONFIG.USER_ROLE_EDIT)
 def user_edit( id ):
     user = UserModel.query.get_or_404(id)
     form = EditUserForm(user)
@@ -134,7 +132,7 @@ def user_edit( id ):
         form.populate_obj(user)
         db.session.add(user)
         db.session.commit()
-        flash('User updated (id=%s)' % (user.id),'success')
+        flash('User Updated (id=%s)' % (user.id),'success')
         logging.info('user_edit( id:%s )' % (user.id))
         return redirect(url_for('.user_view', id=user.id))
     else:
@@ -144,7 +142,7 @@ def user_edit( id ):
 
 
 @user.route('/admin/user/view/<int:id>')
-@login_required
+@role_required(CONFIG.USER_ROLE_EDIT)
 def user_view( id ):
     cols = UserModel.__table__.columns.keys()
     user = UserModel.query.get_or_404(id)
@@ -153,7 +151,7 @@ def user_view( id ):
 
 @user.route('/admin/user/list', methods=['GET','POST'])
 @get_list_opts('user_list_opts')
-@login_required
+@role_required(CONFIG.USER_ROLE_EDIT)
 def user_list():
     cols = UserModel.__table__.columns.keys()
     cols_filtered = list(filter(lambda x: x not in ['user_pass'], cols))

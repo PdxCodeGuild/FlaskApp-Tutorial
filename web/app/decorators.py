@@ -2,7 +2,10 @@ import logging
 from functools import wraps
 
 from flask import request, session
-from . import db
+from flask_login import current_user
+from . import config_default as CONFIG
+from . import db, login_manager
+
 
 # @my_decorator('myvalue')
 def my_decorator(key='some value'):
@@ -13,6 +16,24 @@ def my_decorator(key='some value'):
             return f(*args, **kwargs)
         return _decorated
         #return wraps(f)(_decorated)
+    return _decorator
+
+
+# check current user_role >= requested role
+# if not logged in return unauthorized() ; if not allowed: return needs_refresh()
+def role_required( role=CONFIG.USER_ROLE_VIEW ):
+    def _decorator(f):
+        @wraps(f)
+        def _decorated(*args, **kwargs):
+            if not current_user.is_active:
+                logging.info('role_required( %s ) - unauthorized' % (role))
+                return login_manager.unauthorized()
+            if current_user.user_role < role:
+                logging.info('role_required( %s < %s ) - needs_refresh' % (current_user.user_role,role))
+                return login_manager.needs_refresh()
+            logging.debug('role_required( %s >= %s )' % (CONFIG.USER_ROLE[current_user.user_role],CONFIG.USER_ROLE[role]))
+            return f(*args, **kwargs)
+        return _decorated
     return _decorator
 
 
