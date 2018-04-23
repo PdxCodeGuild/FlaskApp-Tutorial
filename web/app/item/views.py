@@ -6,7 +6,7 @@ from flask_login import current_user, login_required
 from jinja2 import TemplateNotFound
 from .. import config_default as CONFIG
 from .. import db, flash_errors
-from ..decorators import get_list_opts, role_required
+from ..decorators import get_list_opts, role_required, xhr_required
 from ..user.models import UserModel
 from . import item
 from .models import ItemModel, ItemUserModel, get_owner_id_choices
@@ -141,7 +141,7 @@ def item_view( id ):
     return render_template('item_view.html', cols=cols, item=item)
 
 
-@item.route('/admin/item/list', methods=['GET','POST'])
+@item.route('/admin/item/list/', methods=['GET','POST'])
 @get_list_opts('item_list_opts')
 @role_required(CONFIG.USER_ROLE_EDIT)
 def item_list():
@@ -190,6 +190,67 @@ def item_list():
     rowcnt = rows.count()
     logging.debug('item_list - %s' % (rowcnt))
     return render_template('item_list.html', cols=cols_filtered,rows=rows,rowcnt=rowcnt,opts_key=opts_key)
+
+
+@item.route('/item/detail/<int:id>')
+@role_required(CONFIG.USER_ROLE_VIEW)
+@xhr_required()
+def item_detail( id ):
+    item = ItemModel.query.get_or_404(id)
+    cols = ItemModel.__table__.columns.keys()
+    return render_template('item_detail.html', cols=cols, item=item)
+
+
+@item.route('/item/browse/', methods=['GET','POST'])
+@get_list_opts('item_browse_opts')
+@role_required(CONFIG.USER_ROLE_VIEW)
+@xhr_required()
+def item_browse():
+    cols = ItemModel.__table__.columns.keys()
+    cols_filtered = ['keyname']
+    rows = db.session.query(ItemModel)
+
+    opts_key = 'item_browse_opts'
+    S = session[opts_key]
+
+    if S['item_status'] >= current_app.config['ITEM_STATUS_HIDDEN']:
+        rows = rows.filter(ItemModel.item_status == S['item_status'])
+
+    S['itemcnt'] = rows.count()
+    S['pagecnt'] = int(math.ceil( float(S['itemcnt'])/float(S['limit']) ))
+
+    if S['page'] > S['pagecnt']:
+        S['page'] = S['pagecnt']
+    S['offset'] = 0
+    if ((S['page'] - 1) * S['limit']) < S['itemcnt']:
+        S['offset'] = (S['page'] - 1) * S['limit']
+    session[opts_key] = S
+
+    if S['sort'] == 'owner_id':
+        rows = rows.outerjoin(UserModel)
+        #rows = rows.options( db.joinedload(ItemModel.owner_id).load_only("keyname", "user_email") )
+        rows = rows.options( \
+            db.Load(ItemModel).defer("item_text"), \
+            db.Load(UserModel).load_only("keyname", "user_email"), \
+        )
+
+        if S['order'] == 'desc':
+            rows = rows.order_by(getattr( UserModel, 'keyname' ).desc())
+        else:
+            rows = rows.order_by(getattr( UserModel, 'keyname' ).asc())
+    elif S['sort'] in cols_filtered:
+        if S['order'] == 'desc':
+            rows = rows.order_by(getattr( ItemModel, S['sort'] ).desc())
+        else:
+            rows = rows.order_by(getattr( ItemModel, S['sort'] ).asc())
+    if S['offset'] > 0:
+        rows = rows.offset(S['offset'])
+    if S['limit'] > 0:
+        rows = rows.limit(S['limit'])
+
+    rowcnt = rows.count()
+    logging.debug('item_browse - %s' % (rowcnt))
+    return render_template('item_browse.html', cols=cols_filtered,rows=rows,rowcnt=rowcnt,opts_key=opts_key)
 
 
 @item.route('/hello_orm')

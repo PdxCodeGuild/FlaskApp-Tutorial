@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+<!-- BLOCK: main : content -->
+{% block main %}
+<div id="main" class="container-fluid layout-1col">
+    <div class="row">
+        <div id="content" class="col-md-12">
+            {% block content %}block content{% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!-- BLOCK: templates -->
+{% block templates %}{{super()}} - layout_1col.html{% endblock %}
+
+{# end web/app/main/templates/layout_1col.html #}

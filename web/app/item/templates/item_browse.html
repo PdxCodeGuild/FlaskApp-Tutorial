@@ -1,0 +1,53 @@
+<div id="item_browse_panel" class="panel panel-default">
+    <div class="panel-heading">ITEMS</div>
+    <div class="panel-body">
+
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<tr>
+{% for col in cols %}
+    <th>
+    {% if col == session[opts_key]['sort'] and session[opts_key]['order'] == 'asc' %}
+        <a href="{{ url_for('.item_page') }}?sort={{ col }}&order=desc"><span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a>
+    {% elif col == session[opts_key]['sort'] %}
+        <a href="{{ url_for('.item_page') }}?sort={{ col }}&order=asc"><span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span></a>
+    {% else %}
+        <a href="{{ url_for('.item_page') }}?sort={{ col }}"><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></a>
+    {% endif %}
+    {% if col == 'owner_id' %}Owner{% else %}{{ col }}{% endif %}
+    </th>
+{% endfor %}
+<th></th>
+</tr>
+
+{% for row in rows %}
+    <tr class="{%
+        if row.item_status == config['ITEM_STATUS_COMPLETED'] %}success{%
+        elif row.item_status == config['ITEM_STATUS_DRAFT'] %}warning{%
+        elif row.item_status == config['ITEM_STATUS_HIDDEN'] %}danger{%
+        else %}{%
+        endif %}">
+    {% for col in cols %}
+        <td onclick="getItemDetail({{ row.id }}, 'item-detail');">
+            {% if col == "owner_id" and row.owner %}
+                {{ row.owner.keyname }}
+            {% elif col == "item_status" %}
+                {{ config['ITEM_STATUS'][(row[col]|int)] }}
+            {% else %}
+                {{ row[col] }}
+            {% endif %}
+        </td>
+    {% endfor %}
+    <!-- td>
+        <a href="{{ url_for('.item_edit', id=row.id) }}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+    </td -->
+    </tr>
+{% endfor %}
+
+</table>
+</div>
+
+    </div> <!-- end class="panel-body -->
+</div> <!-- end class="panel -->
+
+{# end web/app/item/templates/item_browse.html #}
