@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+<!-- BLOCK: main : content_left, content, content_right -->
+{% block main %}
+<div id="main" class="container-fluid layout-3col">
+    <div class="row">
+        <div id="content_left" class="col-md-2">
+            {% block content_left %}block content_left{% endblock %}
+        </div>
+        <div id="content" class="col-md-8">
+            {% block content %}block content{% endblock %}
+        </div>
+        <div id="content_right" class="col-md-2">
+            {% block content_right %}block content_right{% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!-- BLOCK: templates -->
+{% block templates %}{{super()}} - layout_3col.html{% endblock %}
+
+{# end web/app/main/templates/layout_3col.html #}

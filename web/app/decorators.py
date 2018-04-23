@@ -1,10 +1,10 @@
 import logging
 from functools import wraps
 
-from flask import request, session
+from flask import abort, request, session
 from flask_login import current_user
 from . import config_default as CONFIG
-from . import db, login_manager
+from . import login_manager
 
 
 # @my_decorator('myvalue')
@@ -16,6 +16,20 @@ def my_decorator(key='some value'):
             return f(*args, **kwargs)
         return _decorated
         #return wraps(f)(_decorated)
+    return _decorator
+
+
+# check ajax route is XHR request
+def xhr_required():
+    def _decorator(f):
+        @wraps(f)
+        def _decorated(*args, **kwargs):
+            logging.debug('xhr_required() : %s' % (request.environ['PATH_INFO']))
+            if not request.is_xhr and not CONFIG.LOG_LEVEL == logging.DEBUG:
+                logging.error('Abort non-XHR request : %s' % (request.environ['PATH_INFO']))
+                abort(404)
+            return f(*args, **kwargs)
+        return _decorated
     return _decorator
 
 

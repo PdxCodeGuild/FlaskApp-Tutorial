@@ -1,4 +1,5 @@
-{% extends "base.html" %}
+{% extends "layout_2col.html" %}
+
 
 <!-- BLOCK: title -->
 {% block title %}{{super()}} - Items{% endblock %}
@@ -9,10 +10,23 @@
 <li><a href="{{ url_for('.item_page') }}">Items</a></li>
 {% endblock %}
 
+
+<!-- BLOCK: content_left -->
+{% block content_left %}
+
+<div id="item-browse">
+<script language="javascript">
+$( document ).ready(function() { getItemBrowser('item-browse'); });
+</script>
+</div>
+
+{% endblock %}
+
 <!-- BLOCK: content -->
 {% block content %}
 
 <p>This is public landing page for the Item Module.</p>
+<div id="item-detail"></div>
 
 {% endblock %}
 

@@ -1,0 +1,21 @@
+<h3>Item Detail :: {{ item.keyname }}</h3>
+
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<tr>
+    <th>column</th>
+    <th>value</th>
+</tr>
+
+{% for col in cols %}
+    <tr>
+    <td>{{ col }}</td>
+    <td>{{ item[col] }}</td>
+    </tr>
+{% endfor %}
+
+</table>
+</div>
+
+
+{# end web/app/item/templates/item_detail.html #}
